@@ -85,141 +85,142 @@
 
 <style>
 
-.title{
-    margin-bottom:20px;
-    font-weight:600;
-}
+    .title {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
 
 
-/* responsive grid */
+    /* responsive grid */
 
-.grid {
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    margin-bottom:30px;
-}
-
-
-/* cards */
-
-.card {
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-    text-align:center;
-    transition:.2s;
-}
-
-.card:hover{
-    transform:translateY(-3px);
-}
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
 
 
-/* card colors */
+    /* cards */
 
-.total{
-border-left:6px solid #0d6efd;
-}
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        text-align: center;
+        transition: .2s;
+    }
 
-.submitted{
-border-left:6px solid #198754;
-}
-
-.pending{
-border-left:6px solid #ffc107;
-}
-
-.approved{
-border-left:6px solid #20c997;
-}
+        .card:hover {
+            transform: translateY(-3px);
+        }
 
 
+    /* card colors */
 
-/* charts */
+    .total {
+        border-left: 6px solid #0d6efd;
+    }
 
-.chart {
-    background:white;
-    padding:20px;
-    margin-bottom:25px;
-    border-radius:14px;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
+    .submitted {
+        border-left: 6px solid #198754;
+    }
 
+    .pending {
+        border-left: 6px solid #ffc107;
+    }
 
-.chart-wrapper{
-    position:relative;
-    width:100%;
-    height:300px;
-}
+    .approved {
+        border-left: 6px solid #20c997;
+    }
 
 
 
-/* low domain list */
+    /* charts */
 
-.low-list{
-list-style:none;
-padding:0;
-}
-
-.low-list li{
-display:flex;
-justify-content:space-between;
-padding:8px 0;
-border-bottom:1px solid #eee;
-}
+    .chart {
+        background: white;
+        padding: 20px;
+        margin-bottom: 25px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
 
 
-.success{
-color:green;
-font-weight:600;
-}
+    .chart-wrapper {
+        position: relative;
+        width: 100%;
+        height: 300px;
+    }
 
 
 
-/* tablet */
+    /* low domain list */
 
-@media (max-width:1024px){
+    .low-list {
+        list-style: none;
+        padding: 0;
+    }
 
-.grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-.chart-wrapper{
-height:260px;
-}
-
-}
+        .low-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
 
 
+    .success {
+        color: green;
+        font-weight: 600;
+    }
 
-/* mobile */
 
-@media (max-width:600px){
 
-.grid{
-grid-template-columns:1fr;
-}
+    /* tablet */
 
-.card{
-padding:16px;
-}
+    @@media (max-width:1024px) {
+        .grid
 
-.chart-wrapper{
-height:240px;
-}
+    {
+        grid-template-columns: repeat(2,1fr);
+    }
 
-h1{
-font-size:26px;
-}
+    .chart-wrapper {
+        height: 260px;
+    }
 
-h3{
-font-size:16px;
-}
+    }
 
-}
 
+
+    /* mobile */
+
+    @@media (max-width:600px) {
+        .grid
+
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .chart-wrapper {
+        height: 240px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    }
 </style>
 
 
@@ -229,67 +230,67 @@ font-size:16px;
 
 <script>
 
-const commonOptions = {
-responsive:true,
-maintainAspectRatio:false
-};
+    const commonOptions = {
+    responsive:true,
+    maintainAspectRatio:false
+    };
 
 
-new Chart(document.getElementById("trendChart"),{
+    new Chart(document.getElementById("trendChart"),{
 
-type:'line',
+    type:'line',
 
-data:{
-labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels)),
+    data:{
+    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels)),
 
-datasets:[{
-label:'Assessments',
-data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthCounts)),
-tension:0.3
-}]
-},
+    datasets:[{
+    label:'Assessments',
+    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthCounts)),
+    tension:0.3
+    }]
+    },
 
-options:commonOptions
+    options:commonOptions
 
-});
-
-
-
-new Chart(document.getElementById("assessorChart"),{
-
-type:'bar',
-
-data:{
-labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorNames)),
-
-datasets:[{
-label:'Count',
-data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorCounts))
-}]
-},
-
-options:commonOptions
-
-});
+    });
 
 
 
-new Chart(document.getElementById("recentChart"),{
+    new Chart(document.getElementById("assessorChart"),{
 
-type:'line',
+    type:'bar',
 
-data:{
-labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentDates)),
+    data:{
+    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorNames)),
 
-datasets:[{
-label:'Daily Activity',
-data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentCounts)),
-tension:0.3
-}]
-},
+    datasets:[{
+    label:'Count',
+    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorCounts))
+    }]
+    },
 
-options:commonOptions
+    options:commonOptions
 
-});
+    });
+
+
+
+    new Chart(document.getElementById("recentChart"),{
+
+    type:'line',
+
+    data:{
+    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentDates)),
+
+    datasets:[{
+    label:'Daily Activity',
+    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentCounts)),
+    tension:0.3
+    }]
+    },
+
+    options:commonOptions
+
+    });
 
 </script>
