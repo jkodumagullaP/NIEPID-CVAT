@@ -1,0 +1,108 @@
+﻿/* ===============================
+   CVAT UI COLOR UPGRADE
+   No layout change
+   =============================== */
+
+:root {
+    --navy: #0B2E4F;
+    --navy2: #123A63;
+    --brown: #8B5E3C;
+    --brown2: #A67C52;
+    --bg: #F5F7FA;
+}
+
+/* background */
+
+body {
+    background: var(--bg);
+}
+
+/* header */
+
+.brand-header {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+}
+
+/* navbar color change (light blue → navy) */
+
+.navbar {
+    background: linear-gradient(90deg,var(--navy),var(--navy2)) !important;
+}
+
+/* menu links */
+
+.nav-link {
+    color: white !important;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+    .nav-link:hover {
+        background: rgba(255,255,255,0.15);
+    }
+
+/* dropdown */
+
+.dropdown-menu {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+}
+
+/* buttons */
+
+.btn-primary {
+    background: var(--brown);
+    border: none;
+    border-radius: 8px;
+}
+
+    .btn-primary:hover {
+        background: var(--brown2);
+    }
+
+/* cards */
+
+.page-card {
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+
+/* tables */
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .table thead {
+        background: #eef2f7;
+    }
+
+/* badges */
+
+.badge {
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+/* mobile improvements */
+
+@media(max-width:768px) {
+
+    .brand-title {
+        font-size: 16px;
+    }
+
+    .brand-sub {
+        font-size: 12px;
+    }
+
+    .page-card {
+        padding: 18px;
+    }
+
+    .navbar {
+        padding: 8px;
+    }
+}

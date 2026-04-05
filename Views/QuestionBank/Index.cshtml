@@ -1,0 +1,341 @@
+@using CAT.AID.Models.DTO
+@model List<AssessmentSection>
+
+<h3 class="fw-bold mb-3" style="color:#4B3504;">
+    📚 Question Bank
+</h3>
+
+<style>
+
+    /* PAGE CARD */
+
+    .glass-box {
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(8px);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+        border: 1px solid #e6dcc5;
+        margin-bottom: 22px;
+        transition: .2s;
+    }
+
+        .glass-box:hover {
+            transform: translateY(-2px);
+        }
+
+    /* SECTION TITLE */
+
+    .section-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #4B3504;
+        margin-top: 20px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #4B3504;
+    }
+
+    /* ACTION BAR */
+
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    /* BUTTONS */
+
+    .btn-main {
+        background: linear-gradient(135deg,#4B3504,#6a4a08);
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 8px 18px;
+        border: none;
+        transition: .2s;
+    }
+
+        .btn-main:hover {
+            opacity: .95;
+            transform: translateY(-1px);
+            color: white;
+        }
+
+    /* IMPORT */
+
+    .import-box {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .file-input {
+        border-radius: 10px;
+        border: 1px solid #e6dcc5;
+        padding: 6px;
+    }
+
+    /* TABLE */
+
+    .table {
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+        .table thead {
+            background: linear-gradient(90deg,#4B3504,#6a4a08);
+            color: white;
+            font-size: 14px;
+        }
+
+        .table td {
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .table tbody tr {
+            transition: .15s;
+        }
+
+            .table tbody tr:hover {
+                background: #f8f3e8;
+            }
+
+    /* ACTION BUTTONS */
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* EDIT */
+
+    .btn-edit {
+        background: linear-gradient(135deg,#4B3504,#6a4a08);
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 20px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: .2s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+        .btn-edit:hover {
+            transform: translateY(-1px);
+            opacity: .95;
+            color: white;
+        }
+
+    /* DELETE */
+
+    .btn-delete {
+        background: linear-gradient(135deg,#c62828,#e53935);
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 20px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: .2s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            opacity: .95;
+            color: white;
+        }
+
+    /* RESPONSIVE */
+
+    @@media(max - width:768px) {
+        .action-buttons
+
+    {
+        flex-direction: column;
+    }
+
+    .file-input {
+        width: 100%;
+    }
+
+    }
+</style>
+
+
+<!-- ACTION BAR -->
+
+<div class="glass-box">
+
+    <div class="action-bar">
+
+        <a href="/QuestionBank/Edit"
+           class="btn btn-success">
+
+            ➕ Add Question
+
+        </a>
+
+
+        <form method="post"
+              enctype="multipart/form-data"
+              asp-action="Upload"
+              class="import-box">
+
+            <input type="file"
+                   name="file"
+                   class="form-control file-input"
+                   required />
+
+            <button class="btn btn-main">
+
+                ⬆ Import Excel
+
+            </button>
+
+        </form>
+
+
+        <a href="/QuestionBank/Download"
+           class="btn btn-main">
+
+            ⬇ Export Excel
+
+        </a>
+
+    </div>
+
+</div>
+
+
+
+<!-- SECTIONS -->
+@foreach (var sec in Model)
+{
+
+    <div class="glass-box">
+
+        <h5 class="section-title">
+
+            @sec.Category
+
+        </h5>
+
+
+        <table class="table table-bordered table-hover table-sm">
+
+            <thead>
+
+                <tr>
+
+                    <th style="width:80px;">
+                        ID
+                    </th>
+
+                    <th>
+                        Question
+                    </th>
+
+                    <th style="width:130px;">
+                        Correct
+                    </th>
+
+                    <th style="width:100px;">
+                        Weight
+                    </th>
+
+                    <th style="width:170px;">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                @foreach (var q in sec.Questions)
+                {
+
+                    <tr>
+
+                        <td class="fw-bold">
+
+                            @q.Id
+
+                        </td>
+
+
+                        <td>
+
+                            @q.Text
+
+                        </td>
+
+
+                        <td>
+
+                            @(string.IsNullOrWhiteSpace(q.Correct) ? "-" : q.Correct)
+
+                        </td>
+
+
+                        <td class="fw-bold">
+
+                            @q.ScoreWeight
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <a href="/QuestionBank/Edit?id=@q.Id"
+                                   class="btn-edit">
+
+                                    ✏ Edit
+
+                                </a>
+
+
+                                <a href="/QuestionBank/Delete/@q.Id"
+                                   onclick="return confirm('Delete this question?')"
+                                   class="btn-delete">
+
+                                    🗑 Delete
+
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+<<<<<<< HEAD
+}
+=======
+}
+>>>>>>> 7238502f206e40816d86a9383647a02217754152

@@ -1,0 +1,52 @@
+using Microsoft.AspNetCore.Mvc;
+using CAT.AID.Models;
+using System.Linq;
+
+namespace CAT.AID.Controllers
+{
+
+public class AdminController : Controller
+{
+
+private readonly ApplicationDbContext _context;
+
+
+public AdminController(ApplicationDbContext context)
+{
+
+_context = context;
+
+}
+
+
+public IActionResult Dashboard()
+{
+
+var model = new DashboardViewModel();
+
+model.TotalCandidates = _context.Candidates.Count();
+
+model.TotalAssessments = _context.Assessments.Count();
+
+model.RecentAssessments = _context.Assessments
+.OrderByDescending(a => a.Id)
+.Take(10)
+.ToList();
+
+return View(model);
+
+}
+
+
+
+public IActionResult Users()
+{
+
+var users = _context.Users.ToList();
+
+return View(users);
+
+}
+
+}
+}

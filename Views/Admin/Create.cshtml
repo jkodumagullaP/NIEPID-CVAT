@@ -1,0 +1,236 @@
+﻿@model CAT.AID.Web.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<h2 class="page-title">
+    Create New User
+</h2>
+
+
+<style>
+
+    /* PAGE TITLE */
+
+    .page-title {
+        font-weight: 700;
+        color: #0f172a;
+        margin-top: 10px;
+    }
+
+
+    /* CARD */
+
+    .form-card {
+        background: rgba(255,255,255,.85);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 20px 50px rgba(0,0,0,.08);
+        border: 1px solid #e2e8f0;
+        animation: fadeIn .35s ease;
+    }
+
+
+    /* LABEL */
+
+    .form-label {
+        font-weight: 600;
+        color: #334155;
+    }
+
+
+    /* INPUT */
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        height: 44px;
+        border: 1px solid #cbd5e1;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+        }
+
+
+    /* BUTTONS */
+
+    .btn-create {
+        background: linear-gradient(90deg,#2563eb,#0ea5e9);
+        border: none;
+        color: white;
+        border-radius: 10px;
+        padding: 8px 20px;
+        font-weight: 600;
+    }
+
+        .btn-create:hover {
+            opacity: .9;
+        }
+
+
+    .btn-cancel {
+        border-radius: 10px;
+        padding: 8px 20px;
+    }
+
+
+    /* VALIDATION */
+
+    .validation-summary-errors {
+        background: #fff1f2;
+        padding: 10px;
+        border-radius: 10px;
+        color: #b91c1c;
+    }
+
+
+    /* ANIMATION */
+
+    @@keyframes fadeIn {
+
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+</style>
+
+
+
+<div class="form-card mt-3">
+
+    <form asp-action="Create"
+          asp-controller="Admin"
+          method="post">
+
+        <div asp-validation-summary="All"
+             class="validation-summary-errors mb-3">
+        </div>
+
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Full Name
+            </label>
+
+            <input asp-for="FullName"
+                   class="form-control"
+                   placeholder="Enter full name" />
+
+            <span asp-validation-for="FullName"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Email Address
+            </label>
+
+            <input asp-for="Email"
+                   class="form-control"
+                   placeholder="Enter email address" />
+
+            <span asp-validation-for="Email"
+                  class="text-danger small">
+            </span>
+
+        </div>
+
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Password
+            </label>
+
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Enter password" />
+
+        </div>
+
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Select Role
+            </label>
+
+            <select name="role"
+                    class="form-select">
+
+                <option value="Admin">Admin</option>
+
+                <option value="LeadAssessor">
+                    Lead Assessor
+                </option>
+
+                <option value="Assessor">
+                    Assessor
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Location (optional)
+            </label>
+
+            <input asp-for="Location"
+                   class="form-control"
+                   placeholder="Enter location" />
+
+        </div>
+
+
+
+        <div class="text-end mt-4">
+
+            <button class="btn btn-create me-2">
+                Create User
+            </button>
+
+            <a href="/Admin/Users"
+               class="btn btn-secondary btn-cancel">
+                Cancel
+            </a>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

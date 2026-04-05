@@ -1,0 +1,436 @@
+@using CAT.AID.Models
+@using CAT.AID.Models.DTO
+@model Assessment
+
+@{
+    var sections = ViewBag.Sections as List<AssessmentSection> ?? new();
+
+    var saved = string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
+    ? new Dictionary<string, string>()
+    : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(Model.AssessmentResultJson)!;
+
+    bool editable = Model.IsEditableByAssessor;
+}
+
+<h3 class="page-title">
+Assessment – @Model.Candidate.FullName
+</h3>
+
+<div class="progress modern-progress mb-2">
+    <div id="progressBar" class="progress-bar"></div>
+</div>
+
+
+<form asp-action="Perform"
+      asp-route-id="@Model.Id"
+      method="post">
+
+
+<ul class="nav nav-pills modern-tabs mb-2">
+
+@for (int i = 0; i < sections.Count; i++)
+{
+<li>
+
+<button type="button"
+        class="tab-btn @(i==0?"active":"")"
+        data-bs-toggle="tab"
+        data-bs-target="#tab-@i">
+
+@sections[i].Category
+
+</button>
+
+</li>
+}
+
+<li>
+
+<button type="button"
+        class="tab-btn"
+        data-bs-toggle="tab"
+        data-bs-target="#tab-summary">
+
+Summary
+
+</button>
+
+</li>
+
+</ul>
+
+
+
+<div class="tab-content">
+
+@for (int i = 0; i < sections.Count; i++)
+{
+
+var sec = sections[i];
+
+string sectionCommentKey = $"SECTION_COMMENT_{i}";
+
+saved.TryGetValue(sectionCommentKey,out var savedSectionComment);
+
+<div class="tab-pane fade @(i==0?"show active":"")"
+     id="tab-@i">
+
+
+@foreach (var q in sec.Questions)
+{
+
+string qId = q.Id.ToString();
+
+string ansKey = $"ANS_{qId}";
+string scrKey = $"SCORE_{qId}";
+
+saved.TryGetValue(ansKey,out var savedAns);
+saved.TryGetValue(scrKey,out var savedScore);
+
+
+<div class="question-row">
+
+<div class="q-text">
+@q.Text
+</div>
+
+
+<select class="response-dropdown"
+        name="@ansKey"
+        data-id="@qId"
+        @(editable?"":"disabled")>
+
+<option value="">--</option>
+
+<option value="0" selected="@(savedAns=="0")">
+Dependent
+</option>
+
+<option value="1" selected="@(savedAns=="1")">
+Physical Prompt
+</option>
+
+<option value="2" selected="@(savedAns=="2")">
+Verbal Prompt
+</option>
+
+<option value="3" selected="@(savedAns=="3")">
+Independent
+</option>
+
+</select>
+
+
+<input type="hidden"
+       id="score_@qId"
+       name="@scrKey"
+       value="@(savedScore??"0")"
+       class="score-input"/>
+
+</div>
+
+}
+
+<textarea name="@sectionCommentKey"
+          class="comment-box"
+          placeholder="Section comments"
+          @(editable?"":"readonly")>
+
+@savedSectionComment
+
+</textarea>
+
+</div>
+
+}
+
+
+
+<div class="tab-pane fade"
+     id="tab-summary">
+
+
+<textarea name="SUMMARY_COMMENTS"
+          class="comment-box"
+          placeholder="Overall summary"
+          @(editable?"":"readonly")>
+
+@(saved.GetValueOrDefault("SUMMARY_COMMENTS"))
+
+</textarea>
+
+
+<div class="summary-box">
+
+Total:
+<span id="totalScore"></span>
+
+/
+
+<span id="maxScore"></span>
+
+|
+
+<span id="percentScore"></span>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<div class="footer-bar">
+
+@if(editable)
+{
+
+<button class="btn-save"
+        name="actionType"
+        value="save">
+
+Save
+
+</button>
+
+
+<button class="btn-submit"
+        name="actionType"
+        value="submit">
+
+Submit
+
+</button>
+
+}
+else
+{
+
+<button class="btn-lock">
+
+Locked
+
+</button>
+
+}
+
+</div>
+
+
+</form>
+
+
+
+<style>
+
+/* title */
+
+.page-title{
+font-weight:700;
+color:#0f172a;
+margin-bottom:10px;
+}
+
+
+/* progress */
+
+.modern-progress{
+height:7px;
+border-radius:20px;
+background:#e2e8f0;
+}
+
+.progress-bar{
+background:linear-gradient(90deg,#2563eb,#0ea5e9);
+}
+
+
+/* tabs */
+
+.modern-tabs{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+}
+
+.tab-btn{
+border:none;
+background:#e2e8f0;
+padding:5px 14px;
+border-radius:20px;
+font-weight:600;
+}
+
+.tab-btn.active{
+background:linear-gradient(90deg,#2563eb,#0ea5e9);
+color:white;
+}
+
+
+/* question row */
+
+.question-row{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:8px 5px;
+
+border-bottom:1px solid #e5e7eb;
+
+gap:10px;
+
+}
+
+
+.q-text{
+
+font-size:14px;
+font-weight:500;
+
+flex:1;
+
+}
+
+
+/* dropdown */
+
+.response-dropdown{
+
+width:180px;
+
+border-radius:6px;
+
+border:1px solid #cbd5e1;
+
+height:34px;
+
+}
+
+
+/* textarea */
+
+.comment-box{
+
+width:100%;
+
+margin-top:10px;
+
+border-radius:8px;
+
+border:1px solid #e2e8f0;
+
+padding:8px;
+
+}
+
+
+/* summary */
+
+.summary-box{
+
+background:#f8fafc;
+
+padding:12px;
+
+border-radius:8px;
+
+font-weight:600;
+
+margin-top:10px;
+
+}
+
+
+/* footer */
+
+.footer-bar{
+
+position:sticky;
+
+bottom:0;
+
+background:white;
+
+padding:8px;
+
+border-top:1px solid #e2e8f0;
+
+text-align:right;
+
+}
+
+
+/* buttons */
+
+.btn-save{
+
+background:#facc15;
+
+border:none;
+
+padding:6px 14px;
+
+border-radius:6px;
+
+font-weight:600;
+
+}
+
+
+.btn-submit{
+
+background:linear-gradient(90deg,#2563eb,#0ea5e9);
+
+border:none;
+
+padding:6px 14px;
+
+border-radius:6px;
+
+color:white;
+
+font-weight:600;
+
+}
+
+
+.btn-lock{
+
+background:#94a3b8;
+
+border:none;
+
+padding:6px 14px;
+
+border-radius:6px;
+
+color:white;
+
+}
+
+
+/* mobile */
+
+@@media(max-width:768px){
+
+.question-row{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.response-dropdown{
+
+width:100%;
+
+}
+
+}
+
+</style>

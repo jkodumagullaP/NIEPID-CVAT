@@ -1,0 +1,50 @@
+@model IEnumerable<ApplicationUser>
+
+<div class="container">
+
+<h3 class="text-center mt-3">
+
+Users
+
+</h3>
+
+
+<div class="table-responsive mt-3">
+
+<table class="table table-bordered">
+
+<thead class="table-dark">
+
+<tr>
+
+<th>Email</th>
+
+<th>User Name</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+@foreach(var user in Model)
+{
+
+<tr>
+
+<td>@user.Email</td>
+
+<td>@user.UserName</td>
+
+</tr>
+
+}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>

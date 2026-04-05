@@ -1,0 +1,36 @@
+@model (string section, CAT.AID.Models.DTO.AssessmentQuestion q)
+
+<h2>Add / Edit Question</h2>
+
+<form method="post">
+
+    Section
+    <input name="section" value="@Model.section" required />
+
+    <br/>
+
+    Question
+    <input name="Text" value="@Model.q.Text" required />
+
+    <br/>
+
+    Options (comma separated)
+    <input name="Options" value="@string.Join(",",Model.q.Options)" />
+
+    <br/>
+
+    Correct
+    <input name="Correct" value="@Model.q.Correct" />
+
+    <br/>
+
+    Score
+    <input name="ScoreWeight" value="@Model.q.ScoreWeight" />
+
+    <input type="hidden" name="Id" value="@Model.q.Id"/>
+
+    <br/>
+
+    <button>Save</button>
+
+</form>

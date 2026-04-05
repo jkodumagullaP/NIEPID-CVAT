@@ -1,0 +1,153 @@
+@using CAT.AID.Models.DTO
+@model DashboardDTO
+
+
+<h2 style="margin-bottom:20px;">Dashboard</h2>
+
+<div class="grid">
+
+    <div class="card">
+        <h3>Total</h3>
+        <h1>@Model.TotalAssessments</h1>
+    </div>
+
+    <div class="card">
+        <h3>Submitted</h3>
+        <h1>@Model.SubmittedCount</h1>
+    </div>
+
+    <div class="card">
+        <h3>Pending</h3>
+        <h1>@Model.PendingCount</h1>
+    </div>
+
+    <div class="card">
+        <h3>Approved</h3>
+        <h1>@Model.ApprovedCount</h1>
+    </div>
+
+</div>
+
+
+<div class="chart">
+    <h3>Monthly Trend</h3>
+    <canvas id="trendChart"></canvas>
+</div>
+
+
+<div class="chart">
+    <h3>Assessor Performance</h3>
+    <canvas id="assessorChart"></canvas>
+</div>
+
+
+<div class="chart">
+    <h3>Recent Activity</h3>
+    <canvas id="recentChart"></canvas>
+</div>
+
+
+<div class="chart">
+    <h3>Low Domains</h3>
+
+    @if (Model.LowDomains.Count == 0)
+    {
+        <p>All domains performing well</p>
+    }
+    else
+    {
+        <ul>
+
+            @foreach (var d in Model.LowDomains)
+            {
+                <li>@d.Key : @d.Value.ToString("0")%</li>
+            }
+
+        </ul>
+    }
+
+</div>
+
+
+
+<style>
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.1);
+        text-align: center;
+    }
+
+    .chart {
+        background: white;
+        padding: 20px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,.1);
+    }
+
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    new Chart(document.getElementById("trendChart"),{
+
+    type:'line',
+
+    data:{
+    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels)),
+
+    datasets:[{
+    label:'Assessments',
+    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthCounts)),
+    fill:false
+    }]
+    }
+
+    });
+
+
+    new Chart(document.getElementById("assessorChart"),{
+
+    type:'bar',
+
+    data:{
+    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorNames)),
+
+    datasets:[{
+    label:'Count',
+    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorCounts))
+    }]
+    }
+
+    });
+
+
+    new Chart(document.getElementById("recentChart"),{
+
+    type:'line',
+
+    data:{
+    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentDates)),
+
+    datasets:[{
+    label:'Daily Activity',
+    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentCounts))
+    }]
+    }
+
+    });
+
+</script>

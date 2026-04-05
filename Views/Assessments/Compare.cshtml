@@ -1,0 +1,306 @@
+@using CAT.AID.Models.DTO
+@model List<AssessmentCompareVM>
+
+@{
+    var assessments = ViewBag.Assessments as List<CAT.AID.Models.Assessment>;
+}
+
+@functions {
+
+    public string GetScoreText(object score)
+    {
+        if (score == null)
+            return "—";
+
+        int value = Convert.ToInt32(score);
+
+        return value switch
+        {
+            3 => "Independent",
+            2 => "Verbal Prompt",
+            1 => "Physical Prompt",
+            0 => "Dependent",
+            _ => "—"
+        };
+    }
+
+    public string GetScoreClass(object score)
+    {
+        if (score == null)
+            return "no-score";
+
+        int value = Convert.ToInt32(score);
+
+        return value switch
+        {
+            3 => "score-3",
+            2 => "score-2",
+            1 => "score-1",
+            0 => "score-0",
+            _ => "no-score"
+        };
+    }
+
+}
+
+<style>
+
+    body {
+        font-family: "Segoe UI",sans-serif;
+        background: #f5f7fb;
+    }
+
+    /* card */
+
+    .glass-box {
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(8px);
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    /* header */
+
+    .report-header {
+        font-size: 26px;
+        font-weight: 800;
+        color: #003366;
+        margin-bottom: 15px;
+    }
+
+    /* table */
+
+    .compare-table {
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
+
+        .compare-table th {
+            background: linear-gradient(135deg,#003366,#004d80);
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            padding: 12px;
+        }
+
+        .compare-table td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+    /* colors */
+
+    .score-3 {
+        background: #c8f7c5;
+        font-weight: 700;
+    }
+
+    .score-2 {
+        background: #d9ecff;
+        font-weight: 700;
+    }
+
+    .score-1 {
+        background: #fff4b8;
+        font-weight: 700;
+    }
+
+    .score-0 {
+        background: #ffd9b8;
+        font-weight: 700;
+    }
+
+    .no-score {
+        background: #f2f2f2;
+        color: #999;
+    }
+
+    /* button */
+
+    .btn-modern {
+        border-radius: 8px;
+        padding: 10px 25px;
+        font-weight: 600;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    /* mobile */
+
+    @@media(max-width:768px) {
+
+        .compare-table {
+            font-size: 12px;
+        }
+
+        .report-header {
+            font-size: 20px;
+        }
+    }
+
+</style>
+
+
+
+<h2 class="report-header">
+
+    📊 Assessment Comparison Report
+
+</h2>
+
+
+
+<div class="glass-box">
+
+    <table class="table table-bordered table-sm compare-table">
+
+        <thead>
+
+            <tr>
+
+                <th style="width:140px">
+
+                    Section
+
+                </th>
+
+                <th style="width:260px">
+
+                    Question
+
+                </th>
+
+                @foreach (var a in assessments)
+                {
+
+                    <th>
+
+                        @a.Candidate.FullName
+
+                        <br>
+
+                        <span class="text-warning small">
+
+                            Assessment #@a.Id
+
+                        </span>
+
+                    </th>
+
+                }
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            @foreach (var row in Model)
+            {
+
+                <tr>
+
+                    <td class="fw-bold">
+
+                        @row.Section
+
+                    </td>
+
+                    <td>
+
+                        @row.Question
+
+                    </td>
+
+
+                    @foreach (var a in assessments)
+                    {
+
+                        object rawScore =
+                        row.Scores.ContainsKey(a.Id)
+                        ? row.Scores[a.Id]
+                        : null;
+
+
+                        /* FORCE CONVERT */
+
+                        int? scoreValue = null;
+
+                        if (rawScore != null)
+                        {
+                            int temp;
+                            if (int.TryParse(rawScore.ToString(), out temp))
+                            {
+                                scoreValue = temp;
+                            }
+                        }
+
+
+                        /* COLOR */
+
+                        string scoreClass =
+                        scoreValue == null ? "no-score" :
+                        scoreValue == 3 ? "score-3" :
+                        scoreValue == 2 ? "score-2" :
+                        scoreValue == 1 ? "score-1" :
+                        "score-0";
+
+
+                        <td class="@scoreClass text-center fw-semibold">
+
+
+                            @if (scoreValue == 3)
+                            {
+                                <span>Independent</span>
+                            }
+                            else if (scoreValue == 2)
+                            {
+                                <span>Verbal Prompt</span>
+                            }
+                            else if (scoreValue == 1)
+                            {
+                                <span>Physical Prompt</span>
+                            }
+                            else if (scoreValue == 0)
+                            {
+                                <span>Dependent</span>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+
+
+                        </td>
+
+                    }
+
+                </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+<div class="mt-4 text-end">
+
+    <a asp-action="MyTasks"
+       class="btn btn-secondary btn-modern">
+
+        ⬅ Back to My Tasks
+
+    </a>
+
+<<<<<<< HEAD
+</div>
+=======
+</div>
+>>>>>>> 7238502f206e40816d86a9383647a02217754152

@@ -1,0 +1,295 @@
+<<<<<<< HEAD
+﻿@using CAT.AID.Models.DTO
+=======
+@using CAT.AID.Models.DTO
+>>>>>>> 7238502f206e40816d86a9383647a02217754152
+@model ComparisonReportVM
+
+@functions {
+
+    string ScoreText(object score)
+    {
+        if (score == null)
+            return "—";
+
+        int v;
+
+        if (!int.TryParse(score.ToString(), out v))
+            return "—";
+
+        return v switch
+        {
+            3 => "Independent",
+            2 => "Verbal Prompt",
+            1 => "Physical Prompt",
+            0 => "Dependent",
+            _ => "—"
+        };
+    }
+
+    string ScoreColor(object score)
+    {
+        if (score == null)
+            return "bg-light";
+
+        int v;
+
+        if (!int.TryParse(score.ToString(), out v))
+            return "bg-light";
+
+        return v switch
+        {
+            3 => "table-success",
+            2 => "table-info",
+            1 => "table-warning",
+            0 => "table-danger",
+            _ => "bg-light"
+        };
+    }
+
+}
+
+<style>
+
+    body {
+        font-family: 'Segoe UI',sans-serif;
+        background: #f5f7fb;
+    }
+
+    .compare-card {
+        background: white;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .table th {
+        background: #003366;
+        color: white;
+        text-align: center;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .nav-tabs .nav-link.active {
+        background: #003366;
+        color: white;
+    }
+
+</style>
+
+
+<h2 class="fw-bold text-primary mb-3">
+
+    Progress Comparison – @Model.CandidateName
+
+</h2>
+
+
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-warning">
+
+        @TempData["msg"]
+
+    </div>
+}
+
+
+<div class="alert alert-info">
+
+    <b>Compared Assessments:</b>
+
+    @foreach (var a in Model.Assessments)
+    {
+
+        <span class="badge bg-secondary me-1">
+
+            @a.SubmittedAt?.ToString("dd-MMM-yyyy")
+
+            (@a.Status)
+
+        </span>
+
+    }
+
+</div>
+
+
+
+<!-- DOMAIN TABS -->
+
+<ul class="nav nav-tabs mb-3">
+
+    @{
+        var grouped = Model.Rows.GroupBy(x => x.Domain).ToList();
+
+        for (int i = 0; i < grouped.Count; i++)
+        {
+
+            <li class="nav-item">
+
+                <button class="nav-link @(i == 0 ? "active" : "")"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab@i">
+
+                    @grouped[i].Key
+
+                </button>
+
+            </li>
+
+        }
+
+    }
+
+</ul>
+
+
+
+<div class="tab-content">
+
+    @for (int i = 0; i < grouped.Count; i++)
+    {
+
+        var domain = grouped[i];
+
+        <div class="tab-pane fade @(i == 0 ? "show active" : "")"
+             id="tab@i">
+
+
+            @foreach (var q in domain)
+            {
+
+                string diffText = "";
+
+                string diffClass = "";
+
+
+                if (q.Difference.HasValue)
+                {
+
+                    if (q.Difference > 0)
+                    {
+                        diffText = "▲ Improved";
+                        diffClass = "text-success fw-bold";
+                    }
+
+                    else if (q.Difference < 0)
+                    {
+                        diffText = "▼ Reduced";
+                        diffClass = "text-danger fw-bold";
+                    }
+
+                    else
+                    {
+                        diffText = "No change";
+                        diffClass = "text-secondary";
+                    }
+
+                }
+
+
+                <div class="compare-card">
+
+
+                    <div class="fw-bold mb-2">
+
+                        @q.QuestionText
+
+                    </div>
+
+
+                    <table class="table table-bordered table-sm">
+
+                        <thead>
+
+                            <tr>
+
+                                @foreach (var a in Model.Assessments)
+                                {
+
+                                    <th>
+
+                                        @a.SubmittedAt?.ToString("dd-MMM-yyyy")
+
+                                    </th>
+
+                                }
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                @foreach (var score in q.Scores)
+                                {
+
+                                    <td class="@ScoreColor(score) text-center fw-bold">
+
+                                        @ScoreText(score)
+
+                                    </td>
+
+                                }
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+
+                    <div class="@diffClass">
+
+                        Difference:
+
+                        @diffText
+
+                    </div>
+
+
+                </div>
+
+            }
+
+        </div>
+
+    }
+
+</div>
+
+
+
+<div class="text-end mt-3">
+
+    <a href="javascript:history.back()"
+       class="btn btn-secondary">
+
+        ⬅ Back
+
+    </a>
+
+
+    <a asp-controller="Assessments"
+       asp-action="ExportComparisonPdf"
+       asp-route-candidateId="@Model.CandidateId"
+       asp-route-ids="@string.Join(",", Model.AssessmentIds)"
+       class="btn btn-danger">
+
+        📄 Export PDF
+
+    </a>
+
+<<<<<<< HEAD
+</div>
+=======
+</div>
+>>>>>>> 7238502f206e40816d86a9383647a02217754152

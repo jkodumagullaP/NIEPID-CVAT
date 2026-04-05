@@ -1,0 +1,247 @@
+@using CAT.AID.Models.DTO
+@model ComparisonReportVM
+
+@functions {
+
+    string ScoreText(object score)
+    {
+        if (score == null) return "—";
+
+        int v;
+        if (!int.TryParse(score.ToString(), out v))
+            return "—";
+
+        return v switch
+        {
+            3 => "Independent",
+            2 => "Verbal Prompt",
+            1 => "Physical Prompt",
+            0 => "Dependent",
+            _ => "—"
+        };
+    }
+
+    string ScoreColor(object score)
+    {
+        if (score == null) return "bg-light";
+
+        int v;
+        if (!int.TryParse(score.ToString(), out v))
+            return "bg-light";
+
+        return v switch
+        {
+            3 => "table-success",
+            2 => "table-info",
+            1 => "table-warning",
+            0 => "table-danger",
+            _ => "bg-light"
+        };
+    }
+
+}
+
+<h2 class="fw-bold text-primary mb-3">
+
+    Progress Comparison – @Model.CandidateName
+
+</h2>
+
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-warning">
+
+        @TempData["msg"]
+
+    </div>
+}
+
+
+<!-- assessments -->
+
+<div class="alert alert-info p-2 mb-3">
+
+    <b>Compared Assessments:</b>
+
+    @foreach (var a in Model.Assessments)
+    {
+        <span class="badge bg-secondary mx-1">
+
+            @a.SubmittedAt?.ToString("dd-MMM-yyyy")
+
+            (@a.Status)
+
+        </span>
+    }
+
+</div>
+
+
+
+<!-- tabs -->
+
+<ul class="nav nav-tabs mb-3">
+
+    @{
+        var grouped = Model.Rows.GroupBy(x => x.Domain).ToList();
+
+        for (int i = 0; i < grouped.Count; i++)
+        {
+
+            <li class="nav-item">
+
+                <button class="nav-link @(i == 0 ? "active" : "")"
+                        data-bs-toggle="tab"
+                        data-bs-target="#d@i">
+
+                    @grouped[i].Key
+
+                </button>
+
+            </li>
+
+        }
+
+    }
+
+</ul>
+
+
+
+<div class="tab-content">
+
+    @for (int i = 0; i < grouped.Count; i++)
+    {
+
+        var domain = grouped[i];
+
+        <div class="tab-pane fade @(i == 0 ? "show active" : "")"
+             id="d@i">
+
+
+            @foreach (var q in domain)
+            {
+
+                string diffText = "";
+
+                string diffClass = "";
+
+
+                if (q.Difference.HasValue)
+                {
+                    if (q.Difference > 0)
+                    {
+                        diffText = $"▲ +{q.Difference}";
+                        diffClass = "text-success fw-bold";
+                    }
+                    else if (q.Difference < 0)
+                    {
+                        diffText = $"▼ {q.Difference}";
+                        diffClass = "text-primary fw-bold";
+                    }
+                    else
+                    {
+                        diffText = "• 0";
+                        diffClass = "text-secondary";
+                    }
+                }
+
+
+                <div class="border rounded p-3 mb-3 bg-light">
+
+                    <p class="fw-bold">
+
+                        @q.QuestionText
+
+                    </p>
+
+
+                    <table class="table table-bordered table-sm bg-white">
+
+                        <thead class="table-primary">
+
+                            <tr>
+
+                                @foreach (var a in Model.Assessments)
+                                {
+                                    <th class="text-center">
+
+                                        @a.SubmittedAt?.ToString("dd-MMM-yyyy")
+
+                                    </th>
+                                }
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                @foreach (var score in q.Scores)
+                                {
+
+                                    <td class="text-center fw-bold @ScoreColor(score)">
+
+                                        @ScoreText(score)
+
+                                    </td>
+
+                                }
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+
+                    <div class="@diffClass">
+
+                        Difference:
+
+                        @diffText
+
+                    </div>
+
+
+                </div>
+
+            }
+
+        </div>
+
+    }
+
+</div>
+
+
+
+<div class="text-end mt-4">
+
+    <a href="javascript:history.back()"
+       class="btn btn-secondary">
+
+        ⬅ Back
+
+    </a>
+
+
+    <a asp-controller="Assessments"
+       asp-action="ExportComparisonPdf"
+       asp-route-candidateId="@Model.CandidateId"
+       asp-route-ids="@string.Join(",", Model.AssessmentIds)"
+       class="btn btn-danger">
+
+        📄 Export PDF
+
+    </a>
+
+
+<<<<<<< HEAD
+</div>
+=======
+</div>
+>>>>>>> 7238502f206e40816d86a9383647a02217754152
