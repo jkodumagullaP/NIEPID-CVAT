@@ -1,203 +1,161 @@
 @using CAT.AID.Models.DTO
 @model List<AssessmentSection>
 
-<h3 class="fw-bold mb-3" style="color:#4B3504;">
+<h3 class="fw-bold mb-3 text-brown">
+
     📚 Question Bank
+
 </h3>
 
 <style>
 
-    /* PAGE CARD */
+    /* THEME COLORS */
+
+    :root {
+        --navy: #0B2E4F;
+        --brown: #4B3504;
+        --brown-light: #6a4a08;
+        --bg: #f5f7fa;
+    }
+
+
+    /* CARD */
 
     .glass-box {
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(8px);
-        border-radius: 16px;
-        padding: 22px;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-        border: 1px solid #e6dcc5;
-        margin-bottom: 22px;
-        transition: .2s;
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        margin-bottom: 20px;
     }
 
-        .glass-box:hover {
-            transform: translateY(-2px);
-        }
 
-    /* SECTION TITLE */
+    /* TITLE */
 
-    .section-title {
-        font-size: 19px;
-        font-weight: 700;
-        color: #4B3504;
-        margin-top: 20px;
-        padding-bottom: 6px;
-        border-bottom: 2px solid #4B3504;
+    .text-brown {
+        color: var(--brown);
     }
+
 
     /* ACTION BAR */
 
     .action-bar {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-    }
-
-    /* BUTTONS */
-
-    .btn-main {
-        background: linear-gradient(135deg,#4B3504,#6a4a08);
-        color: white;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 8px 18px;
-        border: none;
-        transition: .2s;
-    }
-
-        .btn-main:hover {
-            opacity: .95;
-            transform: translateY(-1px);
-            color: white;
-        }
-
-    /* IMPORT */
-
-    .import-box {
-        display: flex;
         gap: 10px;
         align-items: center;
     }
 
-    .file-input {
-        border-radius: 10px;
-        border: 1px solid #e6dcc5;
-        padding: 6px;
+
+    /* BUTTON */
+
+    .btn-main {
+        background: linear-gradient(135deg,var(--brown),var(--brown-light));
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-weight: 600;
     }
+
+        .btn-main:hover {
+            opacity: .95;
+            color: white;
+        }
+
 
     /* TABLE */
 
     .table {
         border-radius: 12px;
         overflow: hidden;
-        margin-top: 10px;
+        font-size: 14px;
     }
 
+
         .table thead {
-            background: linear-gradient(90deg,#4B3504,#6a4a08);
+            background: var(--navy);
             color: white;
-            font-size: 14px;
         }
 
-        .table td {
-            vertical-align: middle;
-            font-size: 14px;
+
+        .table tbody tr:hover {
+            background: #f8f9fb;
         }
 
-        .table tbody tr {
-            transition: .15s;
-        }
-
-            .table tbody tr:hover {
-                background: #f8f3e8;
-            }
 
     /* ACTION BUTTONS */
 
     .action-buttons {
         display: flex;
-        gap: 8px;
+        gap: 6px;
     }
+
 
     /* EDIT */
 
     .btn-edit {
-        background: linear-gradient(135deg,#4B3504,#6a4a08);
+        background: var(--brown);
         color: white;
-        border: none;
-        padding: 6px 14px;
-        font-size: 13px;
-        font-weight: 600;
-        border-radius: 20px;
+        padding: 5px 12px;
+        border-radius: 6px;
         text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: .2s;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        font-size: 13px;
     }
 
-        .btn-edit:hover {
-            transform: translateY(-1px);
-            opacity: .95;
-            color: white;
-        }
-
-    /* DELETE */
 
     .btn-delete {
-        background: linear-gradient(135deg,#c62828,#e53935);
+        background: #c62828;
         color: white;
-        border: none;
-        padding: 6px 14px;
-        font-size: 13px;
-        font-weight: 600;
-        border-radius: 20px;
+        padding: 5px 12px;
+        border-radius: 6px;
         text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: .2s;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        font-size: 13px;
     }
 
-        .btn-delete:hover {
-            transform: translateY(-1px);
-            opacity: .95;
-            color: white;
+
+    /* MOBILE */
+
+    @@media(max-width:768px) {
+
+        .action-bar {
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-    /* RESPONSIVE */
-
-    @@media(max - width:768px) {
-        .action-buttons
-
-    {
-        flex-direction: column;
+        .action-buttons {
+            flex-direction: column;
+        }
     }
 
-    .file-input {
-        width: 100%;
-    }
-
-    }
 </style>
 
 
-<!-- ACTION BAR -->
 
 <div class="glass-box">
 
     <div class="action-bar">
 
+
         <a href="/QuestionBank/Edit"
-           class="btn btn-success">
+           class="btn btn-main">
 
             ➕ Add Question
 
         </a>
 
 
+
         <form method="post"
               enctype="multipart/form-data"
               asp-action="Upload"
-              class="import-box">
+              class="d-flex gap-2 flex-wrap">
 
             <input type="file"
                    name="file"
-                   class="form-control file-input"
+                   class="form-control"
                    required />
+
 
             <button class="btn btn-main">
 
@@ -205,7 +163,9 @@
 
             </button>
 
+
         </form>
+
 
 
         <a href="/QuestionBank/Download"
@@ -215,49 +175,62 @@
 
         </a>
 
+
     </div>
 
 </div>
 
 
 
-<!-- SECTIONS -->
 @foreach (var sec in Model)
+
 {
 
     <div class="glass-box">
 
-        <h5 class="section-title">
+
+        <h5 class="fw-bold mb-3 text-brown">
 
             @sec.Category
 
         </h5>
 
 
-        <table class="table table-bordered table-hover table-sm">
+
+        <table class="table table-bordered table-hover">
 
             <thead>
 
                 <tr>
 
-                    <th style="width:80px;">
+                    <th style="width:70px">
+
                         ID
+
                     </th>
 
                     <th>
+
                         Question
+
                     </th>
 
-                    <th style="width:130px;">
+                    <th style="width:120px">
+
                         Correct
+
                     </th>
 
-                    <th style="width:100px;">
+                    <th style="width:90px">
+
                         Weight
+
                     </th>
 
-                    <th style="width:170px;">
+                    <th style="width:160px">
+
                         Actions
+
                     </th>
 
                 </tr>
@@ -265,12 +238,15 @@
             </thead>
 
 
+
             <tbody>
 
                 @foreach (var q in sec.Questions)
+
                 {
 
                     <tr>
+
 
                         <td class="fw-bold">
 
@@ -288,9 +264,13 @@
 
                         <td>
 
-                            @(string.IsNullOrWhiteSpace(q.Correct) ? "-" : q.Correct)
+                            @(string.IsNullOrWhiteSpace(q.Correct)
 
-                        </td>
+                                                ? "-"
+
+                                                : q.Correct)
+
+                </td>
 
 
                         <td class="fw-bold">
@@ -302,7 +282,9 @@
 
                         <td>
 
+
                             <div class="action-buttons">
+
 
                                 <a href="/QuestionBank/Edit?id=@q.Id"
                                    class="btn-edit">
@@ -310,6 +292,7 @@
                                     ✏ Edit
 
                                 </a>
+
 
 
                                 <a href="/QuestionBank/Delete/@q.Id"
@@ -320,22 +303,23 @@
 
                                 </a>
 
+
                             </div>
+
 
                         </td>
 
+
                     </tr>
 
-                }
+                        }
 
             </tbody>
 
+
         </table>
+
 
     </div>
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 7238502f206e40816d86a9383647a02217754152
