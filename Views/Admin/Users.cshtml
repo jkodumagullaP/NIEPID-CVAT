@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using CAT.AID.Web.Models
 @inject UserManager<ApplicationUser> UserManager
 @model IEnumerable<ApplicationUser>
@@ -7,85 +7,169 @@
     ViewData["Title"] = "Users Management";
 }
 
-<h2 class="text-primary fw-bold mt-3 mb-3">👥 Users Management</h2>
+<div class="container mt-4">
 
-<a class="btn btn-primary mb-3 fw-bold" href="/Admin/Create">➕ Create New User</a>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-primary">
+            👥 Users Management
+        </h2>
 
-<table class="table table-striped table-hover shadow-sm align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Location</th>
-            <th>Roles</th>
-            <th>Status</th>
-            <th style="width: 260px;">Actions</th>
-        </tr>
-    </thead>
+        <a class="btn btn-primary shadow-sm px-4"
+           href="/Admin/Create">
+            ➕ Create User
+        </a>
+    </div>
 
-    <tbody>
-        @foreach (var u in Model)
-        {
-            var roles = await UserManager.GetRolesAsync(u);
+    <!-- Card -->
+    <div class="card border-0 shadow-lg rounded-4">
 
-            <tr>
-                <td>@u.FullName</td>
+        <div class="card-body p-0">
 
-                <td>@u.Email</td>
+            <table class="table table-hover align-middle mb-0">
 
-                <td>@(!string.IsNullOrWhiteSpace(u.Location) ? u.Location : "—")</td>
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4">User</th>
+                        <th>Email</th>
+                        <th>Location</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
 
-                <td>
-                    @foreach (var r in roles)
+                <tbody>
+
+                    @foreach (var u in Model)
                     {
-                        var badge = r switch
-                        {
-                            "Admin" => "bg-danger",
-                            "LeadAssessor" => "bg-primary",
-                            "Assessor" => "bg-secondary",
-                            _ => "bg-dark"
-                        };
+                        var roles = await UserManager.GetRolesAsync(u);
 
-                        <span class="badge @badge me-1">@r</span>
-                    }
-                </td>
+                        <tr>
 
-                <td>
-                    @if (u.LockoutEnd != null && u.LockoutEnd > DateTime.UtcNow)
-                    {
-                        <span class="badge bg-warning text-dark fw-bold">Locked</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success fw-bold">Active</span>
-                    }
-                </td>
+                            <!-- Name -->
+                            <td class="ps-4">
+                                <div class="fw-bold">@u.FullName</div>
+                                <small class="text-muted">User Account</small>
+                            </td>
 
-                <td>
-                    <a href="/Admin/Edit/@u.Id" class="btn btn-sm btn-warning me-1">
-                        ✏ Edit
-                    </a>
+                            <!-- Email -->
+                            <td class="text-muted">
+                                @u.Email
+                            </td>
 
-                    <a href="/Admin/Delete/@u.Id"
-                       class="btn btn-sm btn-danger me-1"
-                       onclick="return confirm('Are you sure you want to delete this user?');">
-                        🗑 Delete
-                    </a>
+                            <!-- Location -->
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    @(string.IsNullOrWhiteSpace(u.Location) ? "Default" : u.Location)
+                                </span>
+                            </td>
 
-                    @if (u.LockoutEnd == null || u.LockoutEnd <= DateTime.UtcNow)
-                    {
-                        <a href="/Admin/Lock/@u.Id" class="btn btn-sm btn-secondary">
-                            🔒 Lock
-                        </a>
+                            <!-- Roles -->
+                            <td>
+                                @foreach (var r in roles)
+                                {
+                                    var badge = r switch
+                                    {
+                                        "Admin" => "bg-danger",
+                                        "LeadAssessor" => "bg-primary",
+                                        "Assessor" => "bg-secondary",
+                                        _ => "bg-dark"
+                                    };
+
+                                    <span class="badge @badge me-1 px-3 py-2">
+                                        @r
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- Status -->
+                            <td>
+                                @if (u.LockoutEnd != null && u.LockoutEnd > DateTime.UtcNow)
+                                {
+                                    <span class="badge bg-warning text-dark px-3 py-2">
+                                        🔒 Locked
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success px-3 py-2">
+                                        ✔ Active
+                                    </span>
+                                }
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="text-center">
+
+                                <div class="btn-group">
+
+                                    <a href="/Admin/Edit/@u.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        ✏ Edit
+                                    </a>
+
+                                    <a href="/Admin/Delete/@u.Id"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Delete this user?');">
+                                        🗑 Delete
+                                    </a>
+
+                                    @if (u.LockoutEnd == null || u.LockoutEnd <= DateTime.UtcNow)
+                                    {
+                                        <a href="/Admin/Lock/@u.Id"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            🔒 Lock
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="/Admin/Unlock/@u.Id"
+                                           class="btn btn-sm btn-outline-success">
+                                            🔓 Unlock
+                                        </a>
+                                    }
+
+                                </div>
+
+                            </td>
+
+                        </tr>
                     }
-                    else
-                    {
-                        <a href="/Admin/Unlock/@u.Id" class="btn btn-sm btn-success">
-                            🔓 Unlock
-                        </a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+table tbody tr:hover
+{
+    background-color:#f8f9fa;
+    transition:.2s;
+}
+
+.badge
+{
+    font-size:.8rem;
+    border-radius:8px;
+}
+
+.card
+{
+    background:#ffffff;
+}
+
+.btn
+{
+    border-radius:8px;
+}
+
+</style>
