@@ -1,83 +1,219 @@
 @using CAT.AID.Models.DTO
 @model DashboardDTO
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<h2 class="fw-bold mb-3">
+📊 Dashboard
+</h2>
 
-<h2 class="title">Dashboard</h2>
 
+<!-- METRICS -->
+<div class="row g-3 mb-3">
 
-<div class="grid">
+<div class="col-6 col-md-3">
 
-    <div class="card total">
-        <h3>Total</h3>
-        <h1>@Model.TotalAssessments</h1>
-    </div>
+<div class="metric-card border-primary">
 
-    <div class="card submitted">
-        <h3>Submitted</h3>
-        <h1>@Model.SubmittedCount</h1>
-    </div>
+<div class="metric-title">
+Total
+</div>
 
-    <div class="card pending">
-        <h3>Pending</h3>
-        <h1>@Model.PendingCount</h1>
-    </div>
+<div class="metric-value">
 
-    <div class="card approved">
-        <h3>Approved</h3>
-        <h1>@Model.ApprovedCount</h1>
-    </div>
+@Model.TotalAssessments
+
+</div>
+
+</div>
 
 </div>
 
 
 
-<div class="chart">
-    <h3>Monthly Trend</h3>
-    <div class="chart-wrapper">
-        <canvas id="trendChart"></canvas>
-    </div>
+<div class="col-6 col-md-3">
+
+<div class="metric-card border-success">
+
+<div class="metric-title">
+Submitted
 </div>
 
+<div class="metric-value">
 
-<div class="chart">
-    <h3>Assessor Performance</h3>
-    <div class="chart-wrapper">
-        <canvas id="assessorChart"></canvas>
-    </div>
+@Model.SubmittedCount
+
 </div>
 
+</div>
 
-<div class="chart">
-    <h3>Recent Activity</h3>
-    <div class="chart-wrapper">
-        <canvas id="recentChart"></canvas>
-    </div>
 </div>
 
 
 
-<div class="chart">
-    <h3>Low Domains</h3>
+<div class="col-6 col-md-3">
 
-    @if (Model.LowDomains.Count == 0)
-    {
-        <p class="success">All domains performing well</p>
-    }
-    else
-    {
-        <ul class="low-list">
+<div class="metric-card border-warning">
 
-            @foreach (var d in Model.LowDomains)
-            {
-                <li>
-                    <span>@d.Key</span>
-                    <strong>@d.Value.ToString("0")%</strong>
-                </li>
-            }
+<div class="metric-title">
+Pending
+</div>
 
-        </ul>
-    }
+<div class="metric-value">
+
+@Model.PendingCount
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="col-6 col-md-3">
+
+<div class="metric-card border-info">
+
+<div class="metric-title">
+Approved
+</div>
+
+<div class="metric-value">
+
+@Model.ApprovedCount
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- CHARTS -->
+<div class="row g-3">
+
+<div class="col-12 col-lg-6">
+
+<div class="chart-card">
+
+<h6 class="chart-title">
+
+Monthly Trend
+
+</h6>
+
+<div class="chart-box">
+
+<canvas id="trendChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="col-12 col-lg-6">
+
+<div class="chart-card">
+
+<h6 class="chart-title">
+
+Assessor Performance
+
+</h6>
+
+<div class="chart-box">
+
+<canvas id="assessorChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="col-12">
+
+<div class="chart-card">
+
+<h6 class="chart-title">
+
+Recent Activity
+
+</h6>
+
+<div class="chart-box">
+
+<canvas id="recentChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="col-12 col-lg-6">
+
+<div class="chart-card">
+
+<h6 class="chart-title">
+
+Low Domains
+
+</h6>
+
+
+@if (Model.LowDomains.Count == 0)
+{
+
+<div class="text-success">
+
+All domains performing well
+
+</div>
+
+}
+else
+{
+
+<ul class="list-group">
+
+@foreach (var d in Model.LowDomains)
+{
+
+<li class="list-group-item d-flex justify-content-between">
+
+<span>
+
+@d.Key
+
+</span>
+
+<span class="fw-bold text-danger">
+
+@d.Value.ToString("0")%
+
+</span>
+
+</li>
+
+}
+
+</ul>
+
+}
+
+</div>
+
+</div>
 
 </div>
 
@@ -85,212 +221,175 @@
 
 <style>
 
-    .title {
-        margin-bottom: 20px;
-        font-weight: 600;
-    }
+.metric-card
+{
+background:white;
+padding:16px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+border-left:5px solid;
+text-align:center;
+height:100%;
+}
+
+.metric-title
+{
+font-size:14px;
+color:#64748b;
+}
+
+.metric-value
+{
+font-size:28px;
+font-weight:700;
+margin-top:5px;
+}
 
 
-    /* responsive grid */
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(4,1fr);
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-
-    /* cards */
-
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,.08);
-        text-align: center;
-        transition: .2s;
-    }
-
-        .card:hover {
-            transform: translateY(-3px);
-        }
+.chart-card
+{
+background:white;
+padding:18px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
 
 
-    /* card colors */
-
-    .total {
-        border-left: 6px solid #0d6efd;
-    }
-
-    .submitted {
-        border-left: 6px solid #198754;
-    }
-
-    .pending {
-        border-left: 6px solid #ffc107;
-    }
-
-    .approved {
-        border-left: 6px solid #20c997;
-    }
+.chart-title
+{
+font-weight:600;
+margin-bottom:10px;
+}
 
 
-
-    /* charts */
-
-    .chart {
-        background: white;
-        padding: 20px;
-        margin-bottom: 25px;
-        border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    }
+.chart-box
+{
+position:relative;
+width:100%;
+height:280px;
+}
 
 
-    .chart-wrapper {
-        position: relative;
-        width: 100%;
-        height: 300px;
-    }
+/* tablet */
+
+@media(max-width:992px)
+{
+
+.chart-box
+{
+height:260px;
+}
+
+}
 
 
+/* mobile */
 
-    /* low domain list */
+@media(max-width:576px)
+{
 
-    .low-list {
-        list-style: none;
-        padding: 0;
-    }
+.metric-value
+{
+font-size:22px;
+}
 
-        .low-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
+.chart-box
+{
+height:240px;
+}
 
+}
 
-    .success {
-        color: green;
-        font-weight: 600;
-    }
-
-
-
-    /* tablet */
-
-    @@media (max-width:1024px) {
-        .grid
-
-    {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .chart-wrapper {
-        height: 260px;
-    }
-
-    }
-
-
-
-    /* mobile */
-
-    @@media (max-width:600px) {
-        .grid
-
-    {
-        grid-template-columns: 1fr;
-    }
-
-    .card {
-        padding: 16px;
-    }
-
-    .chart-wrapper {
-        height: 240px;
-    }
-
-    h1 {
-        font-size: 26px;
-    }
-
-    h3 {
-        font-size: 16px;
-    }
-
-    }
 </style>
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
 <script>
 
-    const commonOptions = {
-    responsive:true,
-    maintainAspectRatio:false
-    };
+const commonOptions = {
 
+responsive:true,
 
-    new Chart(document.getElementById("trendChart"),{
+maintainAspectRatio:false
 
-    type:'line',
-
-    data:{
-    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels)),
-
-    datasets:[{
-    label:'Assessments',
-    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthCounts)),
-    tension:0.3
-    }]
-    },
-
-    options:commonOptions
-
-    });
+};
 
 
 
-    new Chart(document.getElementById("assessorChart"),{
+new Chart(document.getElementById("trendChart"),{
 
-    type:'bar',
+type:'line',
 
-    data:{
-    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorNames)),
+data:{
 
-    datasets:[{
-    label:'Count',
-    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorCounts))
-    }]
-    },
+labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels)),
 
-    options:commonOptions
+datasets:[{
 
-    });
+label:'Assessments',
+
+data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthCounts)),
+
+tension:0.3
+
+}]
+
+},
+
+options:commonOptions
+
+});
 
 
 
-    new Chart(document.getElementById("recentChart"),{
+new Chart(document.getElementById("assessorChart"),{
 
-    type:'line',
+type:'bar',
 
-    data:{
-    labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentDates)),
+data:{
 
-    datasets:[{
-    label:'Daily Activity',
-    data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentCounts)),
-    tension:0.3
-    }]
-    },
+labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorNames)),
 
-    options:commonOptions
+datasets:[{
 
-    });
+label:'Count',
+
+data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssessorCounts))
+
+}]
+
+},
+
+options:commonOptions
+
+});
+
+
+
+new Chart(document.getElementById("recentChart"),{
+
+type:'line',
+
+data:{
+
+labels:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentDates)),
+
+datasets:[{
+
+label:'Daily Activity',
+
+data:@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RecentCounts)),
+
+tension:0.3
+
+}]
+
+},
+
+options:commonOptions
+
+});
 
 </script>
