@@ -25,14 +25,13 @@
 
 
     <!-- CARD -->
-    <div class="card border-0 shadow-lg rounded-4">
+    <div class="card shadow-lg border-0 rounded-4">
 
-        <div class="card-body p-0">
-
+        <div class="card-body">
 
             @if (!Model.Any())
             {
-                <div class="p-5 text-center text-muted">
+                <div class="text-center p-5 text-muted">
 
                     <h5>No candidates available</h5>
 
@@ -45,254 +44,241 @@
             else
             {
 
-                <table class="table table-hover align-middle mb-0">
+                <!-- IMPORTANT wrapper -->
+                <div style="overflow:visible">
 
+                    <table class="table table-hover align-middle">
 
-                    <thead class="bg-dark text-white">
-
-                        <tr>
-
-                            <th class="ps-4" style="width:90px;">
-                                Photo
-                            </th>
-
-                            <th>
-                                Candidate Details
-                            </th>
-
-                            <th>
-                                Location
-                            </th>
-
-                            <th style="width:120px;">
-                                Status
-                            </th>
-
-                            <th style="width:160px;">
-                                Actions
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-
-                    <tbody>
-
-                        @foreach (var c in Model)
-                        {
-
-                            var age = DateTime.Now.Year - c.DOB.Year;
-
-                            if (c.DOB.Date > DateTime.Now.AddYears(-age))
-                                age--;
-
+                        <thead class="bg-dark text-white">
 
                             <tr>
 
-
-                                <!-- PHOTO -->
-                                <td class="ps-4">
-
-                                    <img src="@c.PhotoFilePath"
-                                         onerror="this.src='/images/no-photo.png'"
-
-                                         class="profile-img" />
-
-                                </td>
-
-
-
-                                <!-- NAME -->
-                                <td>
-
-                                    <div class="fw-bold">
-
-                                        @c.FullName
-
-                                    </div>
-
-
-                                    <div class="text-muted small">
-
-                                        @c.DisabilityType • @age yrs
-
-                                    </div>
-
-                                </td>
-
-
-
-                                <!-- LOCATION -->
-                                <td>
-
-                                    <span class="text-muted"
-                                          title="@c.CommunicationAddress">
-
-                                        @((c.CommunicationAddress?.Length > 45)
-
-                                            ? c.CommunicationAddress.Substring(0, 45) + "..."
-
-                                            : c.CommunicationAddress)
-
-                                    </span>
-
-                                </td>
-
-
-
-                                <!-- STATUS -->
-                                <td>
-
-                                    @if (!c.IsArchived)
-                                    {
-
-                                        <span class="badge bg-success px-3 py-2">
-
-                                            ✔ Active
-
-                                        </span>
-
-                                    }
-                                    else
-                                    {
-
-                                        <span class="badge bg-danger px-3 py-2">
-
-                                            🚫 Blocked
-
-                                        </span>
-
-                                    }
-
-                                </td>
-
-
-
-                                <!-- ACTIONS -->
-                                <td>
-
-
-                                    <div class="dropdown">
-
-                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
-
-                                                data-bs-toggle="dropdown">
-
-                                            Actions
-
-                                        </button>
-
-
-
-                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3">
-
-
-                                            <li>
-
-                                                <a class="dropdown-item"
-
-                                                   href="@Url.Action("Edit", new { id = c.Id })">
-
-                                                    ✏ Edit
-
-                                                </a>
-
-                                            </li>
-
-
-                                            <li>
-
-                                                <a class="dropdown-item"
-
-                                                   href="@Url.Action("Details", new { id = c.Id })">
-
-                                                    👁 View Profile
-
-                                                </a>
-
-                                            </li>
-
-
-
-                                            <li>
-
-                                                <a class="dropdown-item"
-
-                                                   href="@Url.Action("Assign", new { id = c.Id })">
-
-                                                    📝 Assign Assessment
-
-                                                </a>
-
-                                            </li>
-
-
-
-                                            <li>
-
-                                                <hr class="dropdown-divider">
-
-                                            </li>
-
-
-
-                                            @if (!c.IsArchived)
-                                            {
-
-                                                <li>
-
-                                                    <a class="dropdown-item text-warning"
-
-                                                       href="@Url.Action("Archive", new { id = c.Id })">
-
-                                                        🚫 Block Candidate
-
-                                                    </a>
-
-                                                </li>
-
-                                            }
-                                            else
-                                            {
-
-                                                <li>
-
-                                                    <a class="dropdown-item text-success"
-
-                                                       href="@Url.Action("Unarchive", new { id = c.Id })">
-
-                                                        ♻ Restore Candidate
-
-                                                    </a>
-
-                                                </li>
-
-                                            }
-
-
-                                        </ul>
-
-
-                                    </div>
-
-
-                                </td>
-
+                                <th class="ps-4" style="width:90px;">
+                                    Photo
+                                </th>
+
+                                <th>
+                                    Candidate Details
+                                </th>
+
+                                <th>
+                                    Location
+                                </th>
+
+                                <th style="width:120px;">
+                                    Status
+                                </th>
+
+                                <th style="width:160px;">
+                                    Actions
+                                </th>
 
                             </tr>
 
-                        }
+                        </thead>
 
 
-                    </tbody>
+
+                        <tbody>
+
+                            @foreach (var c in Model)
+                            {
+
+                                var age = DateTime.Now.Year - c.DOB.Year;
+
+                                if (c.DOB.Date > DateTime.Now.AddYears(-age))
+                                    age--;
+
+                                <tr>
 
 
-                </table>
+                                    <!-- PHOTO -->
+                                    <td class="ps-4">
+
+                                        <img src="@c.PhotoFilePath"
+                                             onerror="this.src='/images/no-photo.png'"
+
+                                             class="profile-img" />
+
+                                    </td>
+
+
+
+                                    <!-- NAME -->
+                                    <td>
+
+                                        <div class="fw-bold">
+
+                                            @c.FullName
+
+                                        </div>
+
+
+                                        <div class="text-muted small">
+
+                                            @c.DisabilityType • @age yrs
+
+                                        </div>
+
+                                    </td>
+
+
+
+                                    <!-- LOCATION -->
+                                    <td>
+
+                                        <span class="text-muted"
+                                              title="@c.CommunicationAddress">
+
+                                            @((c.CommunicationAddress?.Length > 45)
+
+                                                ? c.CommunicationAddress.Substring(0, 45) + "..."
+
+                                                : c.CommunicationAddress)
+
+                                        </span>
+
+                                    </td>
+
+
+
+                                    <!-- STATUS -->
+                                    <td>
+
+                                        @if (!c.IsArchived)
+                                        {
+
+                                            <span class="badge bg-success px-3 py-2">
+
+                                                ✔ Active
+
+                                            </span>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-danger px-3 py-2">
+
+                                                🚫 Blocked
+
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+
+                                    <!-- ACTIONS -->
+                                    <td>
+
+                                        <div class="dropdown">
+
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                                                    data-bs-toggle="dropdown"
+                                                    data-bs-display="static">
+
+                                                Actions
+
+                                            </button>
+
+
+                                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
+
+
+                                                <li>
+
+                                                    <a class="dropdown-item"
+                                                       href="@Url.Action("Edit", new { id = c.Id })">
+
+                                                        ✏ Edit
+
+                                                    </a>
+
+                                                </li>
+
+
+                                                <li>
+
+                                                    <a class="dropdown-item"
+                                                       href="@Url.Action("Details", new { id = c.Id })">
+
+                                                        👁 View Profile
+
+                                                    </a>
+
+                                                </li>
+
+
+                                                <li>
+
+                                                    <a class="dropdown-item"
+                                                       href="@Url.Action("Assign", new { id = c.Id })">
+
+                                                        📝 Assign Assessment
+
+                                                    </a>
+
+                                                </li>
+
+
+
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+
+
+
+                                                @if (!c.IsArchived)
+                                                {
+
+                                                    <li>
+
+                                                        <a class="dropdown-item text-warning"
+                                                           href="@Url.Action("Archive", new { id = c.Id })">
+
+                                                            🚫 Block Candidate
+
+                                                        </a>
+
+                                                    </li>
+
+                                                }
+                                                else
+                                                {
+
+                                                    <li>
+
+                                                        <a class="dropdown-item text-success"
+                                                           href="@Url.Action("Unarchive", new { id = c.Id })">
+
+                                                            ♻ Restore Candidate
+
+                                                        </a>
+
+                                                    </li>
+
+                                                }
+
+
+                                            </ul>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             }
-
 
         </div>
 
@@ -304,6 +290,12 @@
 
 <style>
 
+.card
+{
+    overflow:visible !important;
+}
+
+
 .profile-img
 {
     width:55px;
@@ -314,10 +306,6 @@
     background:#f8f9fa;
 }
 
-.card
-{
-    background:white;
-}
 
 .table tbody tr:hover
 {
@@ -325,17 +313,19 @@
     transition:.2s;
 }
 
-.dropdown-menu a:hover
+
+.dropdown-menu
 {
-    background:#eef3ff;
-    font-weight:600;
+    z-index:2000 !important;
 }
+
 
 .badge
 {
     border-radius:8px;
     font-size:.8rem;
 }
+
 
 .btn
 {
