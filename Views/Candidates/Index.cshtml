@@ -29,8 +29,10 @@
 
         <div class="card-body">
 
+
             @if (!Model.Any())
             {
+
                 <div class="text-center p-5 text-muted">
 
                     <h5>No candidates available</h5>
@@ -40,13 +42,14 @@
                     </p>
 
                 </div>
+
             }
             else
             {
 
-                <div style="overflow:visible">
+                <div class="table-responsive">
 
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle mb-0">
 
                         <thead class="bg-dark text-white">
 
@@ -173,11 +176,11 @@
                                     <!-- ACTIONS -->
                                     <td>
 
-                                        <!-- dropup ensures last row menu shows above -->
-                                        <div class="dropup">
+                                        <div class="dropdown">
 
                                             <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
-                                                    data-bs-toggle="dropdown">
+                                                    data-bs-toggle="dropdown"
+                                                    data-bs-boundary="viewport">
 
                                                 Actions
 
@@ -185,7 +188,6 @@
 
 
                                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
-
 
                                                 <li>
 
@@ -226,7 +228,9 @@
 
 
                                                 <li>
+
                                                     <hr class="dropdown-divider">
+
                                                 </li>
 
 
@@ -269,11 +273,14 @@
 
                                     </td>
 
+
                                 </tr>
 
                             }
 
+
                         </tbody>
+
 
                     </table>
 
@@ -291,12 +298,14 @@
 
 <style>
 
+/* allow dropdown outside card */
 .card
 {
     overflow:visible !important;
 }
 
 
+/* profile image */
 .profile-img
 {
     width:55px;
@@ -308,6 +317,7 @@
 }
 
 
+/* hover effect */
 .table tbody tr:hover
 {
     background:#f8f9fa;
@@ -315,12 +325,14 @@
 }
 
 
+/* dropdown visibility fix */
 .dropdown-menu
 {
-    z-index:3000 !important;
+    z-index:5000 !important;
 }
 
 
+/* badge style */
 .badge
 {
     border-radius:8px;
@@ -328,6 +340,7 @@
 }
 
 
+/* button style */
 .btn
 {
     border-radius:8px;
