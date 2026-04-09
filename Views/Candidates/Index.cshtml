@@ -4,7 +4,7 @@
     ViewBag.Title = "Candidates";
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -44,7 +44,6 @@
             else
             {
 
-                <!-- IMPORTANT wrapper -->
                 <div style="overflow:visible">
 
                     <table class="table table-hover align-middle">
@@ -58,7 +57,7 @@
                                 </th>
 
                                 <th>
-                                    Candidate Details
+                                    Name & Disability
                                 </th>
 
                                 <th>
@@ -88,6 +87,7 @@
 
                                 if (c.DOB.Date > DateTime.Now.AddYears(-age))
                                     age--;
+
 
                                 <tr>
 
@@ -173,11 +173,11 @@
                                     <!-- ACTIONS -->
                                     <td>
 
-                                        <div class="dropdown">
+                                        <!-- dropup ensures last row menu shows above -->
+                                        <div class="dropup">
 
                                             <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
-                                                    data-bs-toggle="dropdown"
-                                                    data-bs-display="static">
+                                                    data-bs-toggle="dropdown">
 
                                                 Actions
 
@@ -209,6 +209,7 @@
                                                     </a>
 
                                                 </li>
+
 
 
                                                 <li>
@@ -316,7 +317,7 @@
 
 .dropdown-menu
 {
-    z-index:2000 !important;
+    z-index:3000 !important;
 }
 
 
