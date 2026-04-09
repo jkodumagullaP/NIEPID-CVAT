@@ -17,7 +17,8 @@ namespace CAT.AID.Controllers
             _env = env;
         }
 
-        // Ensure JSON exists
+
+        // ================= LOAD JSON =================
         private List<AssessmentSection> LoadData()
         {
             var folder = Path.Combine(_env.WebRootPath, "data");
@@ -27,31 +28,10 @@ namespace CAT.AID.Controllers
 
             if (!System.IO.File.Exists(FilePath))
             {
-                var sample = new List<AssessmentSection>
-                {
-                    new AssessmentSection
-                    {
-                        Category = "Sample Section",
-                        Questions = new List<AssessmentQuestion>
-                        {
-                            new AssessmentQuestion
-                            {
-                                Id = 1,
-                                Text = "Sample question?",
-                                Options = new List<string>{"Yes","No"},
-                                Correct = "Yes",
-                                ScoreWeight = 1
-                            }
-                        }
-                    }
-                };
-
                 System.IO.File.WriteAllText(
                     FilePath,
-                    JsonSerializer.Serialize(sample, new JsonSerializerOptions
-                    {
-                        WriteIndented = true
-                    })
+                    JsonSerializer.Serialize(new List<AssessmentSection>(),
+                    new JsonSerializerOptions { WriteIndented = true })
                 );
             }
 
@@ -60,185 +40,235 @@ namespace CAT.AID.Controllers
             ) ?? new();
         }
 
+
         private void SaveData(List<AssessmentSection> data)
         {
             System.IO.File.WriteAllText(
                 FilePath,
-                JsonSerializer.Serialize(data,
-                new JsonSerializerOptions { WriteIndented = true })
+                JsonSerializer.Serialize(
+                    data,
+                    new JsonSerializerOptions { WriteIndented = true }
+                )
             );
         }
 
-        // ----------------------
-        // LIST
-        // ----------------------
+
+
+        // ================= LIST =================
         public IActionResult Index()
         {
             return View(LoadData());
         }
 
-        // ----------------------
-        // ADD / EDIT (GET)
-        // ----------------------
+
+
+        // ================= LOAD ADD PAGE =================
         public IActionResult Edit(int? id)
         {
             var all = LoadData();
 
-            AssessmentQuestion q = new();
-            string section = "";
+            var model = new QuestionEditVM();
 
             if (id.HasValue)
             {
-                q = all.SelectMany(x => x.Questions)
-                       .FirstOrDefault(x => x.Id == id) ?? new();
+                var question = all
+                    .SelectMany(x => x.Questions)
+                    .FirstOrDefault(x => x.Id == id);
 
-                section = all
-                    .FirstOrDefault(x => x.Questions.Any(q => q.Id == id))
-                    ?.Category ?? "";
+                if (question != null)
+                {
+                    model.Question = question;
+
+                    model.Section =
+                        all.First(x => x.Questions.Any(q => q.Id == id))
+                           .Category;
+                }
             }
 
-            ViewBag.Sections = all.Select(x => x.Category).Distinct();
+            model.AllSections =
+                all.Select(x => x.Category)
+                   .Distinct()
+                   .ToList();
 
-            return View((section, q));
+            return View(model);
         }
 
-        // ----------------------
-        // ADD / EDIT (POST)
-        // ----------------------
+
+
+        // ================= SAVE =================
         [HttpPost]
-        public IActionResult Edit(string section, AssessmentQuestion q)
+        public IActionResult Edit(QuestionEditVM vm)
         {
+            if (string.IsNullOrWhiteSpace(vm.Section))
+            {
+                ModelState.AddModelError("", "Section required");
+                return View(vm);
+            }
+
             var all = LoadData();
 
-            var sec = all.FirstOrDefault(x => x.Category == section);
+            var sec = all.FirstOrDefault(
+                x => x.Category == vm.Section.Trim()
+            );
 
             if (sec == null)
             {
                 sec = new AssessmentSection
                 {
-                    Category = section,
+                    Category = vm.Section.Trim(),
                     Questions = new()
                 };
 
                 all.Add(sec);
             }
 
-            var existing = sec.Questions.FirstOrDefault(x => x.Id == q.Id);
+
+            vm.Question.Options ??= new List<string>();
+
+
+            var existing = sec.Questions
+                .FirstOrDefault(x => x.Id == vm.Question.Id);
+
 
             if (existing == null)
             {
-                q.Id = all.SelectMany(x => x.Questions).Any()
+                vm.Question.Id =
+                    all.SelectMany(x => x.Questions).Any()
                     ? all.SelectMany(x => x.Questions).Max(x => x.Id) + 1
                     : 1;
 
-                sec.Questions.Add(q);
+                sec.Questions.Add(vm.Question);
             }
             else
             {
-                existing.Text = q.Text;
-                existing.Options = q.Options;
-                existing.Correct = q.Correct;
-                existing.ScoreWeight = q.ScoreWeight;
+                existing.Text = vm.Question.Text;
+                existing.Options = vm.Question.Options;
+                existing.Correct = vm.Question.Correct;
+                existing.ScoreWeight = vm.Question.ScoreWeight;
             }
+
 
             SaveData(all);
 
-            TempData["msg"] = "Saved successfully";
+            TempData["msg"] = "Question saved";
+
             return RedirectToAction(nameof(Index));
         }
 
-        // ----------------------
-        // DELETE
-        // ----------------------
+
+
+        // ================= DELETE =================
         public IActionResult Delete(int id)
         {
             var all = LoadData();
 
-            foreach (var sec in all)
-                sec.Questions.RemoveAll(x => x.Id == id);
+            foreach (var s in all)
+                s.Questions.RemoveAll(x => x.Id == id);
 
             SaveData(all);
 
             return RedirectToAction(nameof(Index));
         }
 
-        // ----------------------
-        // DOWNLOAD EXCEL
-        // ----------------------
+
+
+        // ================= EXPORT =================
         public IActionResult Download()
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext =
+                LicenseContext.NonCommercial;
 
             var data = LoadData();
 
-            using var package = new ExcelPackage();
-            var ws = package.Workbook.Worksheets.Add("Questions");
+            using var pkg = new ExcelPackage();
+
+            var ws =
+                pkg.Workbook.Worksheets.Add("Questions");
+
 
             ws.Cells[1, 1].Value = "Section";
-            ws.Cells[1, 2].Value = "Id";
-            ws.Cells[1, 3].Value = "Question";
-            ws.Cells[1, 4].Value = "Options";
-            ws.Cells[1, 5].Value = "Correct";
-            ws.Cells[1, 6].Value = "Score";
+            ws.Cells[1, 2].Value = "Question";
+            ws.Cells[1, 3].Value = "Options";
+            ws.Cells[1, 4].Value = "Correct";
+            ws.Cells[1, 5].Value = "Score";
+
 
             int r = 2;
 
-            foreach (var sec in data)
-            foreach (var q in sec.Questions)
+
+            foreach (var s in data)
+            foreach (var q in s.Questions)
             {
-                ws.Cells[r, 1].Value = sec.Category;
-                ws.Cells[r, 2].Value = q.Id;
-                ws.Cells[r, 3].Value = q.Text;
-                ws.Cells[r, 4].Value = string.Join(",", q.Options);
-                ws.Cells[r, 5].Value = q.Correct;
-                ws.Cells[r, 6].Value = q.ScoreWeight;
+                ws.Cells[r, 1].Value = s.Category;
+                ws.Cells[r, 2].Value = q.Text;
+                ws.Cells[r, 3].Value =
+                    string.Join(",", q.Options ?? new());
+                ws.Cells[r, 4].Value = q.Correct;
+                ws.Cells[r, 5].Value = q.ScoreWeight;
 
                 r++;
             }
 
+
             return File(
-                package.GetAsByteArray(),
+                pkg.GetAsByteArray(),
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "QuestionBank.xlsx"
             );
         }
 
-        // ----------------------
-        // UPLOAD EXCEL
-        // ----------------------
+
+
+        // ================= IMPORT =================
         [HttpPost]
         public IActionResult Upload(IFormFile file)
         {
             if (file == null || !file.FileName.EndsWith(".xlsx"))
             {
-                TempData["msg"] = "Upload valid Excel file";
+                TempData["msg"] = "Upload Excel file";
                 return RedirectToAction(nameof(Index));
             }
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            ExcelPackage.LicenseContext =
+                LicenseContext.NonCommercial;
+
 
             var data = LoadData();
 
-            using var package = new ExcelPackage(file.OpenReadStream());
-            var ws = package.Workbook.Worksheets[0];
+
+            using var pkg =
+                new ExcelPackage(file.OpenReadStream());
+
+            var ws = pkg.Workbook.Worksheets[0];
+
 
             int row = 2;
 
+
             while (ws.Cells[row, 1].Value != null)
             {
-                string section = ws.Cells[row, 1].Text;
-                string text = ws.Cells[row, 3].Text;
+                var section = ws.Cells[row, 1].Text.Trim();
 
-                var options = ws.Cells[row, 4]
-                    .Text.Split(',')
+                var text = ws.Cells[row, 2].Text;
+
+                var options =
+                    ws.Cells[row, 3].Text
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Trim())
                     .ToList();
 
-                string correct = ws.Cells[row, 5].Text;
+                var correct = ws.Cells[row, 4].Text;
 
-                int.TryParse(ws.Cells[row, 6].Text, out int score);
+                int.TryParse(
+                    ws.Cells[row, 5].Text,
+                    out int score
+                );
 
-                var sec = data.FirstOrDefault(x => x.Category == section);
+
+                var sec =
+                    data.FirstOrDefault(x => x.Category == section);
+
 
                 if (sec == null)
                 {
@@ -251,9 +281,12 @@ namespace CAT.AID.Controllers
                     data.Add(sec);
                 }
 
-                int id = data.SelectMany(x => x.Questions).Any()
+
+                int id =
+                    data.SelectMany(x => x.Questions).Any()
                     ? data.SelectMany(x => x.Questions).Max(x => x.Id) + 1
                     : 1;
+
 
                 sec.Questions.Add(new AssessmentQuestion
                 {
@@ -264,10 +297,15 @@ namespace CAT.AID.Controllers
                     ScoreWeight = score
                 });
 
+
                 row++;
             }
 
+
             SaveData(data);
+
+
+            TempData["msg"] = "Imported successfully";
 
             return RedirectToAction(nameof(Index));
         }
