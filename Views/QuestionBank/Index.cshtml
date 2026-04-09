@@ -1,130 +1,213 @@
-@using CAT.AID.Models.DTO       // ✔ RIGHT
+@using CAT.AID.Models.DTO
 @model List<AssessmentSection>
 
-<h3 class="fw-bold mb-3" style="color:#003366;">📚 Question Bank</h3>
+<div class="container mt-4">
 
-<style>
-    .glass-box {
-        background: rgba(255,255,255,0.65);
-        backdrop-filter: blur(10px);
-        border-radius: 14px;
-        padding: 20px;
-        box-shadow: 0 4px 18px rgba(0,0,0,0.12);
-        border: 1px solid #dbe6f5;
-        margin-bottom: 20px;
-    }
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-    .section-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #003366;
-        margin-top: 25px;
-        padding-bottom: 4px;
-        border-bottom: 2px solid #003366;
-    }
+        <h2 class="fw-bold text-primary">
+            📚 Question Bank
+        </h2>
 
-    .btn-navy {
-        background: #003366;
-        color: #fff;
-        font-weight: 600;
-        border-radius: 8px;
-        padding: 6px 16px;
-    }
+        <div class="d-flex gap-2 flex-wrap">
 
-        .btn-navy:hover {
-            background: #00254d;
-        }
+            <a href="/QuestionBank/Edit"
+               class="btn btn-success shadow-sm px-3">
+                ➕ Add Question
+            </a>
 
-    .table thead {
-        background: #003366;
-        color: white;
-    }
+            <form method="post"
+                  enctype="multipart/form-data"
+                  asp-action="Upload"
+                  class="d-flex gap-2">
 
-    .table td, .table th {
-        vertical-align: middle;
-    }
+                <input type="file"
+                       name="file"
+                       class="form-control form-control-sm"
+                       required />
 
-    .import-box {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-right: 10px;
-    }
+                <button class="btn btn-primary shadow-sm">
+                    ⬆ Import
+                </button>
 
-    .file-input {
-        width: 250px;
-        border-radius: 8px;
-    }
-</style>
+            </form>
 
-<!-- ========================= ACTION BAR ========================= -->
-<div class="glass-box">
+            <a href="/QuestionBank/Download"
+               class="btn btn-outline-primary shadow-sm">
+                ⬇ Export
+            </a>
 
-    <div class="d-flex flex-wrap align-items-center gap-3">
-
-        <a href="/QuestionBank/Edit" class="btn btn-success">
-            ➕ Add New Question
-        </a>
-
-        <!-- IMPORT EXCEL -->
-        <form method="post" enctype="multipart/form-data" asp-action="Upload" class="import-box">
-            <input type="file" name="file" class="form-control file-input" required />
-            <button class="btn btn-primary">⬆ Import Excel</button>
-        </form>
-
-        <!-- EXPORT EXCEL -->
-        <a href="/QuestionBank/Download" class="btn btn-navy">
-            ⬇ Export Excel
-        </a>
+        </div>
 
     </div>
+
+
+    <!-- SECTIONS -->
+    @foreach (var sec in Model)
+    {
+
+        <div class="card border-0 shadow-lg rounded-4 mb-4">
+
+            <!-- SECTION HEADER -->
+            <div class="card-header bg-dark text-white rounded-top-4">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div class="fw-bold fs-5">
+                        📂 @sec.Category
+                    </div>
+
+                    <span class="badge bg-light text-dark">
+                        @sec.Questions.Count Questions
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+            <div class="card-body p-0">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th class="ps-4" style="width:80px;">ID</th>
+
+                            <th>Question</th>
+
+                            <th style="width:140px;">Correct</th>
+
+                            <th style="width:120px;">Weight</th>
+
+                            <th style="width:200px;" class="text-center">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var q in sec.Questions)
+                        {
+
+                            <tr>
+
+                                <!-- ID -->
+                                <td class="fw-bold ps-4 text-primary">
+                                    #@q.Id
+                                </td>
+
+
+                                <!-- Question -->
+                                <td>
+                                    @q.Text
+                                </td>
+
+
+                                <!-- Correct -->
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(q.Correct))
+                                    {
+                                        <span class="badge bg-success px-3 py-2">
+                                            ✔ @q.Correct
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Weight -->
+                                <td>
+                                    <span class="badge bg-info text-dark px-3 py-2">
+                                        @q.ScoreWeight
+                                    </span>
+                                </td>
+
+
+                                <!-- ACTIONS -->
+                                <td class="text-center">
+
+                                    <div class="btn-group">
+
+                                        <a href="/QuestionBank/Edit?id=@q.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            ✏ Edit
+                                        </a>
+
+                                        <a href="/QuestionBank/Delete/@q.Id"
+                                           onclick="return confirm('Delete this question?')"
+                                           class="btn btn-sm btn-outline-danger">
+                                            🗑 Delete
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    }
 
 </div>
 
 
-<!-- ========================= SECTIONS ========================= -->
-@foreach (var sec in Model)
+
+<style>
+
+.card
 {
-    <div class="glass-box">
-
-        <h5 class="section-title">@sec.Category</h5>
-
-        <table class="table table-bordered table-hover table-sm mt-2">
-            <thead>
-                <tr>
-                    <th style="width:80px;">ID</th>
-                    <th>Question</th>
-                    <th style="width:130px;">Correct</th>
-                    <th style="width:100px;">Weight</th>
-                    <th style="width:160px;">Actions</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach (var q in sec.Questions)
-                {
-                    <tr>
-                        <td class="fw-bold">@q.Id</td>
-                        <td>@q.Text</td>
-                        <td>@(string.IsNullOrWhiteSpace(q.Correct) ? "-" : q.Correct)</td>
-                        <td class="fw-bold">@q.ScoreWeight</td>
-
-                        <td>
-                            <a href="/QuestionBank/Edit?id=@q.Id"
-                               class="btn btn-sm btn-primary me-1">
-                                ✏ Edit
-                            </a>
-
-                            <a href="/QuestionBank/Delete/@q.Id"
-                               onclick="return confirm('Delete this question?')"
-                               class="btn btn-sm btn-danger">
-                                🗑 Delete
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-    </div>
+    background:white;
 }
+
+.card-header
+{
+    border:none;
+}
+
+.table tbody tr:hover
+{
+    background-color:#f8f9fa;
+    transition:.2s;
+}
+
+.badge
+{
+    font-size:.8rem;
+    border-radius:8px;
+}
+
+.btn
+{
+    border-radius:8px;
+}
+
+input[type=file]
+{
+    border-radius:8px;
+}
+
+</style>
