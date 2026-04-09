@@ -5,184 +5,224 @@
 @model Assessment
 
 @{
-var recommendations = ViewBag.Recommendations as Dictionary<string, List<string>>;
-var weakDetails = ViewBag.WeakDetails as Dictionary<string, List<string>>;
+var recommendations = ViewBag.Recommendations as Dictionary<string,List<string>>;
 var sections = ViewBag.Sections as List<AssessmentSection>;
 
+var saved =
+string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
+? new Dictionary<string,string>()
+: System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,string>>
+(Model.AssessmentResultJson);
 
-var saved = string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
-    ? new Dictionary<string,string>()
-    : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,string>>(Model.AssessmentResultJson);
-
-var score = string.IsNullOrWhiteSpace(Model.ScoreJson)
-    ? new AssessmentScoreDTO()
-    : System.Text.Json.JsonSerializer.Deserialize<AssessmentScoreDTO>(Model.ScoreJson);
+var score =
+string.IsNullOrWhiteSpace(Model.ScoreJson)
+? new AssessmentScoreDTO()
+: System.Text.Json.JsonSerializer.Deserialize<AssessmentScoreDTO>
+(Model.ScoreJson);
 
 var candidate = Model.Candidate;
 
-
-}
-
-<style>
-
-.glass-card{
-background:rgba(255,255,255,.75);
-backdrop-filter:blur(12px);
-border-radius:16px;
-padding:20px;
-box-shadow:0 10px 28px rgba(0,0,0,.15);
-}
-
-.soft-card{
-background:#f7f9ff;
-border-radius:12px;
-padding:16px;
-border:1px solid #dce6ff;
-box-shadow:0 2px 10px rgba(0,0,0,.05);
-}
-
-.metric-box{
-border-radius:12px;
-padding:12px;
-background:rgba(240,248,255,.7);
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-}
-
-</style>
-
-<h3 class="text-primary fw-bold">
-Assessment Result — @candidate.FullName
-</h3>
-
-<!-- Candidate Information -->
-
-<div class="card shadow-sm p-3 mb-4">
-
-<h4 class="fw-bold text-primary mb-3">
-🧑‍💼 Candidate Information
-</h4>
-
-<div class="row">
-
-<div class="col-md-3 text-center">
-
-<img src="@candidate.PhotoFilePath"
-class="border rounded"
-style="width:140px;height:160px;object-fit:cover;" />
-
-</div>
-
-<div class="col-md-9">
-
-<table class="table table-bordered">
-
-<tr><th>Name</th><td>@candidate.FullName</td></tr>
-<tr><th>Gender</th><td>@candidate.Gender</td></tr>
-<tr><th>Date of Birth</th><td>@candidate.DOB.ToString("dd-MMM-yyyy")</td></tr>
-<tr><th>Education</th><td>@candidate.Education</td></tr>
-<tr><th>Marital Status</th><td>@candidate.MaritalStatus</td></tr>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Score Metrics -->
-
-@{
 double percent = score.MaxScore > 0
-? Math.Round(((double)score.TotalScore / score.MaxScore) * 100, 2)
+? Math.Round(((double)score.TotalScore / score.MaxScore) * 100,2)
 : 0;
 }
 
-<div class="metric-box mb-3">
+<h3 class="fw-bold text-primary mb-3">
 
-<strong>Total Score:</strong>
+Assessment Result — @candidate.FullName
+
+</h3>
+
+
+
+<!-- Candidate info -->
+
+<div class="card shadow-sm mb-3">
+
+<div class="card-body">
+
+<div class="row g-3 align-items-center">
+
+<div class="col-12 col-md-3 text-center">
+
+<img src="@candidate.PhotoFilePath"
+class="candidate-img"/>
+
+</div>
+
+
+<div class="col-12 col-md-9">
+
+<div class="row small">
+
+<div class="col-6">
+<b>Name</b><br/>
+@candidate.FullName
+</div>
+
+<div class="col-6">
+<b>Gender</b><br/>
+@candidate.Gender
+</div>
+
+<div class="col-6 mt-2">
+<b>DOB</b><br/>
+@candidate.DOB.ToString("dd MMM yyyy")
+</div>
+
+<div class="col-6 mt-2">
+<b>Education</b><br/>
+@candidate.Education
+</div>
+
+<div class="col-12 mt-2">
+<b>Marital Status</b><br/>
+@candidate.MaritalStatus
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- score -->
+
+<div class="alert alert-primary">
+
+<b>Total Score:</b>
+
 @score.TotalScore / @score.MaxScore
 
-  
+&nbsp;&nbsp;
 
-<strong>Percentage:</strong>
+<b>Percentage:</b>
+
 @percent %
 
 </div>
 
-<!-- Charts -->
 
-<div class="row mb-4">
 
-<div class="col-md-6">
-<div class="soft-card">
+<!-- charts -->
+
+<div class="row g-3 mb-3">
+
+<div class="col-12 col-md-6">
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
 <canvas id="barChart"></canvas>
-</div>
+
 </div>
 
-<div class="col-md-6">
-<div class="soft-card">
+</div>
+
+</div>
+
+
+<div class="col-12 col-md-6">
+
+<div class="card shadow-sm">
+
+<div class="card-body">
+
 <canvas id="doughnutChart"></canvas>
+
 </div>
+
 </div>
 
 </div>
 
-<hr/>
+</div>
 
-<h5 class="fw-bold text-primary">
-🎯 Recommendations
-</h5>
+
+
+<!-- recommendations -->
 
 @if(recommendations?.Any()==true)
 {
-foreach(var r in recommendations)
+
+<h5 class="fw-bold text-primary">
+
+🎯 Recommendations
+
+</h5>
+
+@foreach(var r in recommendations)
 {
 
-<div class="soft-card mb-2">
+<div class="card mb-2 shadow-sm">
 
-<h6 class="fw-bold text-primary">
-@r.Key
-</h6>
+<div class="card-body">
 
-<ul>
+<b>@r.Key</b>
+
+<ul class="small mb-0">
 
 @foreach(var rec in r.Value)
 {
 
 <li>@rec</li>
+
 }
 
 </ul>
 
 </div>
-}
+
+</div>
+
 }
 
-<hr/>
+}
 
-<!-- SECTION PERFORMANCE -->
+
+
+<!-- section results -->
 
 @foreach(var sec in sections)
 {
 
 <h5 class="fw-bold text-info mt-4">
+
 @sec.Category
+
 </h5>
 
-<table class="table table-bordered table-sm">
+
+
+<div class="table-responsive">
+
+<table class="table table-bordered small">
 
 <thead class="table-dark">
 
 <tr>
-<th>Q ID</th>
+
+<th>ID</th>
+
 <th>Question</th>
+
 <th>Answer</th>
+
 <th>Score</th>
+
 <th>Evidence</th>
+
 </tr>
 
 </thead>
+
 
 <tbody>
 
@@ -190,12 +230,14 @@ foreach(var r in recommendations)
 {
 
 saved.TryGetValue($"ANS_{q.Id}",out string ans);
+
 saved.TryGetValue($"SCORE_{q.Id}",out string scr);
 
 var files = saved
 .Where(x=>x.Key.StartsWith($"FILE_{q.Id}"))
 .Select(x=>x.Value)
 .ToList();
+
 
 <tr>
 
@@ -207,25 +249,35 @@ var files = saved
 
 <td>@(scr ?? "0")</td>
 
+
 <td>
 
 @if(files.Any())
 {
+
 foreach(var f in files)
 {
 
-<div>
 <a href="/uploads/@f"
 target="_blank"
-class="btn btn-outline-primary btn-sm">
-📎 View
+class="btn btn-outline-primary btn-sm mb-1">
+
+View
+
 </a>
-</div>
+
 }
+
 }
 else
 {
-<span class="text-muted">—</span>
+
+<span class="text-muted">
+
+—
+
+</span>
+
 }
 
 </td>
@@ -238,40 +290,29 @@ else
 
 </table>
 
-<!-- SECTION COMMENT -->
-
-
-string sectionCommentKey = $"SECTION_COMMENT_{sec.Id}";
-saved.TryGetValue(sectionCommentKey,out string secComment);
-
-
-@if(!string.IsNullOrEmpty(secComment))
-{
-
-<div class="alert alert-secondary">
-
-<strong>Section Comment:</strong>
-
-<p>@secComment</p>
-
 </div>
-}
 
 }
 
-<hr/>
 
-<div class="alert alert-secondary">
 
-<h6 class="fw-bold">
-📝 Overall Summary
-</h6>
+<!-- summary -->
 
-<p>@ViewBag.Summary</p>
+<div class="alert alert-secondary mt-3">
+
+<b>Summary</b>
+
+<p class="mb-0">
+
+@ViewBag.Summary
+
+</p>
 
 </div>
 
-<div class="text-end mt-3">
+
+
+<!-- pdf -->
 
 <form method="post"
 action="/Assessments/ExportReportPdf/@Model.Id">
@@ -284,7 +325,8 @@ name="barChartImage"/>
 id="doughnutChartImage"
 name="doughnutChartImage"/>
 
-<button class="btn btn-primary">
+
+<button class="btn btn-primary w-100">
 
 📄 Download PDF
 
@@ -292,7 +334,45 @@ name="doughnutChartImage"/>
 
 </form>
 
-</div>
+
+
+<style>
+
+.candidate-img
+{
+width:130px;
+height:150px;
+object-fit:cover;
+border-radius:10px;
+border:1px solid #e5e7eb;
+}
+
+
+.card
+{
+border-radius:12px;
+}
+
+
+table td
+{
+vertical-align:middle;
+}
+
+
+@media(max-width:768px){
+
+.candidate-img
+{
+width:100px;
+height:120px;
+}
+
+}
+
+</style>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -305,7 +385,9 @@ const values =
 @Html.Raw(Json.Serialize(score.SectionScores.Values));
 
 const total=@score.TotalScore;
+
 const remaining=@score.MaxScore-total;
+
 
 new Chart(document.getElementById("barChart"),{
 
@@ -315,8 +397,7 @@ data:{
 labels,
 datasets:[{
 label:"Section Score",
-data:values,
-backgroundColor:"#1F5CAA"
+data:values
 }]
 }
 
@@ -330,8 +411,7 @@ type:"doughnut",
 data:{
 labels:["Achieved","Remaining"],
 datasets:[{
-data:[total,remaining],
-backgroundColor:["#003366","#9bbde6"]
+data:[total,remaining]
 }]
 }
 
