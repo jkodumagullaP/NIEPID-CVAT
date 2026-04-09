@@ -5,19 +5,23 @@
 @{
     var sections = ViewBag.Sections as List<AssessmentSection> ?? new();
 
-    var saved = string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
+    var saved =
+    string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
     ? new Dictionary<string, string>()
-    : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(Model.AssessmentResultJson)!;
+    : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,string>>
+      (Model.AssessmentResultJson)!;
 
     bool editable = Model.IsEditableByAssessor;
 }
 
-<h3 class="page-title">
+<h3 class="fw-bold mb-2">
 Assessment – @Model.Candidate.FullName
 </h3>
 
-<div class="progress modern-progress mb-2">
-    <div id="progressBar" class="progress-bar"></div>
+
+<!-- progress -->
+<div class="progress mb-3">
+<div id="progressBar" class="progress-bar"></div>
 </div>
 
 
@@ -26,30 +30,35 @@ Assessment – @Model.Candidate.FullName
       method="post">
 
 
-<ul class="nav nav-pills modern-tabs mb-2">
+<!-- TABS -->
+<div class="tab-scroll">
+
+<ul class="nav nav-pills flex-nowrap">
 
 @for (int i = 0; i < sections.Count; i++)
 {
-<li>
+
+<li class="me-1">
 
 <button type="button"
-        class="tab-btn @(i==0?"active":"")"
-        data-bs-toggle="tab"
-        data-bs-target="#tab-@i">
+class="tab-btn @(i==0?"active":"")"
+data-bs-toggle="tab"
+data-bs-target="#tab-@i">
 
 @sections[i].Category
 
 </button>
 
 </li>
+
 }
 
 <li>
 
 <button type="button"
-        class="tab-btn"
-        data-bs-toggle="tab"
-        data-bs-target="#tab-summary">
+class="tab-btn"
+data-bs-toggle="tab"
+data-bs-target="#tab-summary">
 
 Summary
 
@@ -59,9 +68,12 @@ Summary
 
 </ul>
 
+</div>
 
 
-<div class="tab-content">
+
+<div class="tab-content mt-2">
+
 
 @for (int i = 0; i < sections.Count; i++)
 {
@@ -71,6 +83,7 @@ var sec = sections[i];
 string sectionCommentKey = $"SECTION_COMMENT_{i}";
 
 saved.TryGetValue(sectionCommentKey,out var savedSectionComment);
+
 
 <div class="tab-pane fade @(i==0?"show active":"")"
      id="tab-@i">
@@ -88,17 +101,20 @@ saved.TryGetValue(ansKey,out var savedAns);
 saved.TryGetValue(scrKey,out var savedScore);
 
 
-<div class="question-row">
+<div class="question-card">
+
 
 <div class="q-text">
+
 @q.Text
+
 </div>
 
 
-<select class="response-dropdown"
-        name="@ansKey"
-        data-id="@qId"
-        @(editable?"":"disabled")>
+<select class="form-select"
+name="@ansKey"
+data-id="@qId"
+@(editable?"":"disabled")>
 
 <option value="">--</option>
 
@@ -122,45 +138,51 @@ Independent
 
 
 <input type="hidden"
-       id="score_@qId"
-       name="@scrKey"
-       value="@(savedScore??"0")"
-       class="score-input"/>
+id="score_@qId"
+name="@scrKey"
+value="@(savedScore??"0")"
+class="score-input"/>
 
 </div>
 
 }
 
+
 <textarea name="@sectionCommentKey"
-          class="comment-box"
-          placeholder="Section comments"
-          @(editable?"":"readonly")>
+class="form-control mt-2"
+placeholder="Section comments"
+rows="2"
+@(editable?"":"readonly")>
 
 @savedSectionComment
 
 </textarea>
 
+
 </div>
 
 }
 
 
+
+<!-- SUMMARY -->
 
 <div class="tab-pane fade"
      id="tab-summary">
 
 
 <textarea name="SUMMARY_COMMENTS"
-          class="comment-box"
-          placeholder="Overall summary"
-          @(editable?"":"readonly")>
+class="form-control"
+rows="3"
+placeholder="Overall summary"
+@(editable?"":"readonly")>
 
 @(saved.GetValueOrDefault("SUMMARY_COMMENTS"))
 
 </textarea>
 
 
-<div class="summary-box">
+<div class="summary-box mt-2">
 
 Total:
 <span id="totalScore"></span>
@@ -178,27 +200,30 @@ Total:
 
 </div>
 
+
 </div>
 
 
+
+<!-- FOOTER BUTTONS -->
 
 <div class="footer-bar">
 
 @if(editable)
 {
 
-<button class="btn-save"
-        name="actionType"
-        value="save">
+<button class="btn btn-warning me-2"
+name="actionType"
+value="save">
 
 Save
 
 </button>
 
 
-<button class="btn-submit"
-        name="actionType"
-        value="submit">
+<button class="btn btn-primary"
+name="actionType"
+value="submit">
 
 Submit
 
@@ -208,7 +233,7 @@ Submit
 else
 {
 
-<button class="btn-lock">
+<button class="btn btn-secondary">
 
 Locked
 
@@ -225,128 +250,57 @@ Locked
 
 <style>
 
-/* title */
-
-.page-title{
-font-weight:700;
-color:#0f172a;
-margin-bottom:10px;
+/* tabs scroll */
+.tab-scroll{
+overflow-x:auto;
+white-space:nowrap;
+padding-bottom:5px;
 }
 
 
-/* progress */
-
-.modern-progress{
-height:7px;
-border-radius:20px;
-background:#e2e8f0;
-}
-
-.progress-bar{
-background:linear-gradient(90deg,#2563eb,#0ea5e9);
-}
-
-
-/* tabs */
-
-.modern-tabs{
-display:flex;
-flex-wrap:wrap;
-gap:6px;
-}
-
+/* tab button */
 .tab-btn{
 border:none;
 background:#e2e8f0;
-padding:5px 14px;
+padding:6px 14px;
 border-radius:20px;
 font-weight:600;
+font-size:13px;
 }
 
 .tab-btn.active{
-background:linear-gradient(90deg,#2563eb,#0ea5e9);
+background:#2563eb;
 color:white;
 }
 
 
-/* question row */
-
-.question-row{
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-padding:8px 5px;
-
-border-bottom:1px solid #e5e7eb;
-
-gap:10px;
-
+/* question card */
+.question-card{
+border:1px solid #e5e7eb;
+border-radius:10px;
+padding:10px;
+margin-bottom:8px;
+background:white;
 }
 
 
 .q-text{
-
+font-weight:600;
 font-size:14px;
-font-weight:500;
-
-flex:1;
-
-}
-
-
-/* dropdown */
-
-.response-dropdown{
-
-width:180px;
-
-border-radius:6px;
-
-border:1px solid #cbd5e1;
-
-height:34px;
-
-}
-
-
-/* textarea */
-
-.comment-box{
-
-width:100%;
-
-margin-top:10px;
-
-border-radius:8px;
-
-border:1px solid #e2e8f0;
-
-padding:8px;
-
+margin-bottom:5px;
 }
 
 
 /* summary */
-
 .summary-box{
-
 background:#f8fafc;
-
-padding:12px;
-
+padding:10px;
 border-radius:8px;
-
 font-weight:600;
-
-margin-top:10px;
-
 }
 
 
-/* footer */
-
+/* sticky footer */
 .footer-bar{
 
 position:sticky;
@@ -355,82 +309,35 @@ bottom:0;
 
 background:white;
 
-padding:8px;
+padding:10px;
 
-border-top:1px solid #e2e8f0;
+border-top:1px solid #e5e7eb;
 
 text-align:right;
 
-}
-
-
-/* buttons */
-
-.btn-save{
-
-background:#facc15;
-
-border:none;
-
-padding:6px 14px;
-
-border-radius:6px;
-
-font-weight:600;
+margin-top:15px;
 
 }
 
 
-.btn-submit{
+/* mobile spacing */
+@media(max-width:768px){
 
-background:linear-gradient(90deg,#2563eb,#0ea5e9);
+.footer-bar{
 
-border:none;
-
-padding:6px 14px;
-
-border-radius:6px;
-
-color:white;
-
-font-weight:600;
+text-align:center;
 
 }
 
+.tab-btn{
 
-.btn-lock{
+font-size:12px;
 
-background:#94a3b8;
-
-border:none;
-
-padding:6px 14px;
-
-border-radius:6px;
-
-color:white;
-
-}
-
-
-/* mobile */
-
-@@media(max-width:768px){
-
-.question-row{
-
-flex-direction:column;
-
-align-items:flex-start;
-
-}
-
-.response-dropdown{
-
-width:100%;
+padding:6px 10px;
 
 }
 
 }
+
 
 </style>
