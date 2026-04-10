@@ -9,7 +9,6 @@
     My Assessments
 </h2>
 
-
 <style>
 
     /* PAGE TITLE */
@@ -42,33 +41,33 @@
     }
 
 
-        /* HEADER */
+    /* HEADER */
 
-        .table-modern thead {
-            background: linear-gradient(90deg,#0b5ed7,#2563eb);
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-
-        /* ROW STYLE */
-
-        .table-modern tbody tr {
-            transition: .2s;
-        }
-
-            .table-modern tbody tr:hover {
-                background: #f1f5ff;
-            }
+    .table-modern thead {
+        background: linear-gradient(90deg,#0b5ed7,#2563eb);
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+    }
 
 
-        /* CELL SPACING */
+    /* ROW STYLE */
 
-        .table-modern td {
-            vertical-align: middle;
-            padding: 10px;
-        }
+    .table-modern tbody tr {
+        transition: .2s;
+    }
+
+    .table-modern tbody tr:hover {
+        background: #f1f5ff;
+    }
+
+
+    /* CELL SPACING */
+
+    .table-modern td {
+        vertical-align: middle;
+        padding: 10px;
+    }
 
 
     /* STATUS BUTTON */
@@ -124,22 +123,22 @@
     }
 
 
-    /* ANIMATION */
+    /* ANIMATION (Razor-safe) */
 
     @@keyframes fadeIn {
-        from
 
-    {
-        opacity: 0;
-        transform: translateY(10px);
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    }
 </style>
 
 
@@ -178,9 +177,7 @@
                     <tr>
 
                         <td class="fw-semibold">
-
                             @row.CandidateName
-
                         </td>
 
 
@@ -252,9 +249,7 @@
                             {
 
                                 <td class="text-muted text-center">
-
                                     —
-
                                 </td>
 
                             }
@@ -303,54 +298,54 @@
 
     boxes.forEach(cb => {
 
-    cb.addEventListener("change", () => {
+        cb.addEventListener("change", () => {
 
-    const selected =
-    [...boxes].filter(x => x.checked);
-
-
-    if (selected.length < 2) {
-
-    btn.disabled = true;
-
-    candidateField.value = "";
-
-    return;
-
-    }
+            const selected =
+            [...boxes].filter(x => x.checked);
 
 
-    const candidateIds =
-    [
-    ...new Set(
-    selected.map(x => x.dataset.candidate)
-    )
-    ];
+            if (selected.length < 2) {
+
+                btn.disabled = true;
+
+                candidateField.value = "";
+
+                return;
+
+            }
 
 
-    if (candidateIds.length === 1) {
+            const candidateIds =
+            [
+                ...new Set(
+                    selected.map(x => x.dataset.candidate)
+                )
+            ];
 
-    candidateField.value =
-    candidateIds[0];
 
-    btn.disabled = false;
+            if (candidateIds.length === 1) {
 
-    }
-    else {
+                candidateField.value =
+                candidateIds[0];
 
-    alert(
-    "Please select assessments for same candidate"
-    );
+                btn.disabled = false;
 
-    cb.checked = false;
+            }
+            else {
 
-    btn.disabled = true;
+                alert(
+                    "Please select assessments for same candidate"
+                );
 
-    candidateField.value = "";
+                cb.checked = false;
 
-    }
+                btn.disabled = true;
 
-    });
+                candidateField.value = "";
+
+            }
+
+        });
 
     });
 
