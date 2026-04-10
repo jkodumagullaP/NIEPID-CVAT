@@ -5,24 +5,176 @@
 @{
     var sections = ViewBag.Sections as List<AssessmentSection> ?? new();
 
-    var saved =
-    string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
+    var saved = string.IsNullOrWhiteSpace(Model.AssessmentResultJson)
     ? new Dictionary<string, string>()
-    : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string,string>>
-      (Model.AssessmentResultJson)!;
+    : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(Model.AssessmentResultJson)!;
 
     bool editable = Model.IsEditableByAssessor;
 }
 
-<h3 class="fw-bold mb-2">
-Assessment – @Model.Candidate.FullName
+<h3 class="page-title">
+    Assessment – @Model.Candidate.FullName
 </h3>
 
 
-<!-- progress -->
-<div class="progress mb-3">
-<div id="progressBar" class="progress-bar"></div>
+<!-- PROGRESS BAR -->
+
+<div class="progress modern-progress mb-3">
+
+    <div id="progressBar"
+         class="progress-bar">
+    </div>
+
 </div>
+
+
+
+<style>
+
+    /* TITLE */
+
+    .page-title {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 18px;
+    }
+
+
+    /* PROGRESS BAR */
+
+    .modern-progress {
+        height: 14px;
+        border-radius: 10px;
+        background: #e2e8f0;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(90deg,#2563eb,#0ea5e9);
+        transition: .3s;
+    }
+
+
+    /* GLASS CARD */
+
+    .glass-box {
+        background: rgba(255,255,255,.8);
+        backdrop-filter: blur(10px);
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 15px 40px rgba(0,0,0,.08);
+    }
+
+
+    /* TABS */
+
+    .nav-tabs {
+        border-bottom: none;
+        gap: 6px;
+    }
+
+        .nav-tabs .nav-link {
+            border: none;
+            background: #f1f5f9;
+            color: #334155;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-weight: 600;
+        }
+
+            .nav-tabs .nav-link.active {
+                background: linear-gradient(90deg,#2563eb,#0ea5e9);
+                color: white;
+            }
+
+
+    /* QUESTION CARD */
+
+    .question-box {
+        border-radius: 14px;
+        background: #f8fbff;
+        padding: 14px;
+        margin-bottom: 14px;
+        border: 1px solid #e2e8f0;
+        transition: .2s;
+    }
+
+        .question-box:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,.08);
+        }
+
+
+    /* DROPDOWN */
+
+    .response-dropdown {
+        border-radius: 10px;
+        height: 42px;
+        border: 1px solid #cbd5e1;
+    }
+
+        .response-dropdown:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+        }
+
+
+    /* SECTION SCORE */
+
+    .section-score {
+        background: #eef4ff;
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-weight: 600;
+    }
+
+
+    /* SUMMARY */
+
+    .summary-box {
+        background: #f1f5ff;
+        border-radius: 12px;
+        padding: 15px;
+        font-weight: 600;
+    }
+
+
+    /* BUTTONS */
+
+    .btn-save {
+        background: #facc15;
+        color: #1e293b;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 600;
+    }
+
+    .btn-submit {
+        background: linear-gradient(90deg,#2563eb,#0ea5e9);
+        border: none;
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 600;
+        color: white;
+    }
+
+
+    /* ANIMATION */
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+</style>
+
 
 
 <form asp-action="Perform"
@@ -30,314 +182,420 @@ Assessment – @Model.Candidate.FullName
       method="post">
 
 
-<!-- TABS -->
-<div class="tab-scroll">
+    <ul class="nav nav-tabs mb-3">
 
-<ul class="nav nav-pills flex-nowrap">
+        @for (int i = 0; i < sections.Count; i++)
+        {
 
-@for (int i = 0; i < sections.Count; i++)
-{
+            <li class="nav-item">
 
-<li class="me-1">
+                <button type="button"
+                        class="nav-link @(i == 0 ? "active" : "")"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-@i">
 
-<button type="button"
-class="tab-btn @(i==0?"active":"")"
-data-bs-toggle="tab"
-data-bs-target="#tab-@i">
+                    @sections[i].Category
 
-@sections[i].Category
+                </button>
 
-</button>
+            </li>
 
-</li>
+        }
 
-}
+        <li class="nav-item">
 
-<li>
+            <button type="button"
+                    class="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#tab-summary">
 
-<button type="button"
-class="tab-btn"
-data-bs-toggle="tab"
-data-bs-target="#tab-summary">
+                Summary
 
-Summary
+            </button>
 
-</button>
+        </li>
 
-</li>
-
-</ul>
-
-</div>
+    </ul>
 
 
 
-<div class="tab-content mt-2">
+    <div class="tab-content glass-box">
 
 
-@for (int i = 0; i < sections.Count; i++)
-{
+        @for (int i = 0; i < sections.Count; i++)
+        {
 
-var sec = sections[i];
+            var sec = sections[i];
 
-string sectionCommentKey = $"SECTION_COMMENT_{i}";
+            string sectionCommentKey = $"SECTION_COMMENT_{i}";
 
-saved.TryGetValue(sectionCommentKey,out var savedSectionComment);
-
-
-<div class="tab-pane fade @(i==0?"show active":"")"
-     id="tab-@i">
+            saved.TryGetValue(sectionCommentKey, out var savedSectionComment);
 
 
-@foreach (var q in sec.Questions)
-{
-
-string qId = q.Id.ToString();
-
-string ansKey = $"ANS_{qId}";
-string scrKey = $"SCORE_{qId}";
-
-saved.TryGetValue(ansKey,out var savedAns);
-saved.TryGetValue(scrKey,out var savedScore);
+            <div class="tab-pane fade @(i == 0 ? "show active" : "")"
+                 id="tab-@i">
 
 
-<div class="question-card">
+                @foreach (var q in sec.Questions)
+                {
+
+                    string qId = q.Id.ToString();
+
+                    string ansKey = $"ANS_{qId}";
+
+                    string scrKey = $"SCORE_{qId}";
+
+                    saved.TryGetValue(ansKey, out var savedAns);
+
+                    saved.TryGetValue(scrKey, out var savedScore);
 
 
-<div class="q-text">
+                    <div class="question-box">
 
-@q.Text
+                        <div class="row align-items-center">
 
-</div>
+                            <div class="col-md-8">
 
+                                <label class="fw-semibold">
 
-<select class="form-select"
-name="@ansKey"
-data-id="@qId"
-@(editable?"":"disabled")>
+                                    @q.Text
 
-<option value="">--</option>
+                                </label>
 
-<option value="0" selected="@(savedAns=="0")">
-Dependent
-</option>
-
-<option value="1" selected="@(savedAns=="1")">
-Physical Prompt
-</option>
-
-<option value="2" selected="@(savedAns=="2")">
-Verbal Prompt
-</option>
-
-<option value="3" selected="@(savedAns=="3")">
-Independent
-</option>
-
-</select>
+                            </div>
 
 
-<input type="hidden"
-id="score_@qId"
-name="@scrKey"
-value="@(savedScore??"0")"
-class="score-input"/>
+                            <div class="col-md-4">
 
-</div>
+                                <select class="form-select response-dropdown"
+                                        name="@ansKey"
+                                        data-id="@qId"
+                                        @(editable ? "" : "disabled")>
 
-}
+                                    <option value="">select</option>
+
+                                    <option value="0"
+                                            selected="@(savedAns == "0")">
+                                        Dependent
+                                    </option>
+
+                                    <option value="1"
+                                            selected="@(savedAns == "1")">
+                                        Physical Prompt
+                                    </option>
+
+                                    <option value="2"
+                                            selected="@(savedAns == "2")">
+                                        Verbal Prompt
+                                    </option>
+
+                                    <option value="3"
+                                            selected="@(savedAns == "3")">
+                                        Independent
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
 
 
-<textarea name="@sectionCommentKey"
-class="form-control mt-2"
-placeholder="Section comments"
-rows="2"
-@(editable?"":"readonly")>
+                        <input type="hidden"
+                               id="score_@qId"
+                               name="@scrKey"
+                               value="@(savedScore ?? "0")"
+                               class="score-input" />
+
+
+                    </div>
+
+                }
+
+
+
+                <div class="mt-3">
+
+                    <label class="fw-semibold">
+
+                        Section Comments
+
+                    </label>
+
+
+    <textarea name="@sectionCommentKey"
+          rows="3"
+          class="form-control"
+          @(editable ? "" : "readonly")>
 
 @savedSectionComment
 
 </textarea>
 
-
-</div>
-
-}
+                </div>
 
 
+                <div class="section-score mt-2">
 
-<!-- SUMMARY -->
+                    Section Score:
 
-<div class="tab-pane fade"
-     id="tab-summary">
+                    <span class="sectionScore">
+
+                        0
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        }
+
+
+
+        <div class="tab-pane fade"
+             id="tab-summary">
+
+
+            <label class="fw-semibold">
+
+                Overall Summary
+
+            </label>
 
 
 <textarea name="SUMMARY_COMMENTS"
-class="form-control"
-rows="3"
-placeholder="Overall summary"
-@(editable?"":"readonly")>
+          rows="4"
+          class="form-control mb-3"
+          @(editable ? "" : "readonly")>
 
 @(saved.GetValueOrDefault("SUMMARY_COMMENTS"))
 
 </textarea>
 
 
-<div class="summary-box mt-2">
+            <div class="summary-box">
 
-Total:
-<span id="totalScore"></span>
+                Total Score:
 
-/
+                <span id="totalScore"></span>
 
-<span id="maxScore"></span>
+                /
 
-|
+                <span id="maxScore"></span>
 
-<span id="percentScore"></span>
+                |
 
-</div>
+                <span id="percentScore"></span>
 
+            </div>
 
-</div>
-
-
-</div>
+        </div>
 
 
-
-<!-- FOOTER BUTTONS -->
-
-<div class="footer-bar">
-
-@if(editable)
-{
-
-<button class="btn btn-warning me-2"
-name="actionType"
-value="save">
-
-Save
-
-</button>
+    </div>
 
 
-<button class="btn btn-primary"
-name="actionType"
-value="submit">
 
-Submit
+    <div class="text-end mt-3">
 
-</button>
+        @if (editable)
+        {
 
-}
-else
-{
+            <button class="btn btn-save me-2"
+                    name="actionType"
+                    value="save">
 
-<button class="btn btn-secondary">
+                Save
 
-Locked
+            </button>
 
-</button>
 
-}
+            <button class="btn btn-submit"
+                    name="actionType"
+                    value="submit">
 
-</div>
+                Submit
+
+            </button>
+
+        }
+        else
+        {
+
+            <button class="btn btn-secondary"
+                    disabled>
+
+                Assessment Locked
+
+            </button>
+
+        }
+
+    </div>
 
 
 </form>
 
 
 
-<style>
+<script>
 
-/* tabs scroll */
-.tab-scroll{
-overflow-x:auto;
-white-space:nowrap;
-padding-bottom:5px;
-}
+    let dropdowns;
+
+    let currentIndex = 0;
 
 
-/* tab button */
-.tab-btn{
-border:none;
-background:#e2e8f0;
-padding:6px 14px;
-border-radius:20px;
-font-weight:600;
-font-size:13px;
-}
+    document.addEventListener("DOMContentLoaded",()=>{
 
-.tab-btn.active{
-background:#2563eb;
-color:white;
-}
+    dropdowns =
+    document.querySelectorAll(".response-dropdown");
 
 
-/* question card */
-.question-card{
-border:1px solid #e5e7eb;
-border-radius:10px;
-padding:10px;
-margin-bottom:8px;
-background:white;
-}
+    dropdowns.forEach((d,i)=>{
+
+    d.dataset.index = i;
+
+    });
 
 
-.q-text{
-font-weight:600;
-font-size:14px;
-margin-bottom:5px;
-}
+    computeTotals();
 
 
-/* summary */
-.summary-box{
-background:#f8fafc;
-padding:10px;
-border-radius:8px;
-font-weight:600;
-}
+    setInterval(autoSave,30000);
+
+    });
 
 
-/* sticky footer */
-.footer-bar{
+    document.addEventListener("change",e=>{
 
-position:sticky;
+    if(e.target.classList.contains("response-dropdown")){
 
-bottom:0;
+    let id = e.target.dataset.id;
 
-background:white;
+    document.getElementById("score_"+id).value =
+    e.target.value;
 
-padding:10px;
+    currentIndex =
+    Number(e.target.dataset.index);
 
-border-top:1px solid #e5e7eb;
+    moveNext();
 
-text-align:right;
+    computeTotals();
 
-margin-top:15px;
+    }
 
-}
-
-
-/* mobile spacing */
-@media(max-width:768px){
-
-.footer-bar{
-
-text-align:center;
-
-}
-
-.tab-btn{
-
-font-size:12px;
-
-padding:6px 10px;
-
-}
-
-}
+    });
 
 
-</style>
+    document.addEventListener("keydown",e=>{
+
+    if(["0","1","2","3"].includes(e.key)){
+
+    let d = dropdowns[currentIndex];
+
+    if(!d) return;
+
+    d.value = e.key;
+
+    let id = d.dataset.id;
+
+    document.getElementById("score_"+id).value =
+    e.key;
+
+    moveNext();
+
+    computeTotals();
+
+    }
+
+    });
+
+
+    function moveNext(){
+
+    currentIndex++;
+
+    if(currentIndex < dropdowns.length){
+
+    dropdowns[currentIndex].focus();
+
+    }
+
+    }
+
+
+    function computeTotals(){
+
+    let total = 0;
+
+    let max =
+    document.querySelectorAll(".score-input").length * 3;
+
+    let answered = 0;
+
+
+    document.querySelectorAll(".score-input").forEach(i=>{
+
+    let v = Number(i.value);
+
+    if(!isNaN(v)){
+
+    total += v;
+
+    answered++;
+
+    }
+
+    });
+
+
+    document.getElementById("totalScore").innerText = total;
+
+    document.getElementById("maxScore").innerText = max;
+
+
+    document.getElementById("percentScore").innerText =
+    ((total/max)*100).toFixed(1)+"%";
+
+
+    updateProgress(answered);
+
+    }
+
+
+    function updateProgress(answered){
+
+    let totalQuestions =
+    document.querySelectorAll(".score-input").length;
+
+
+    let percent =
+    (answered/totalQuestions)*100;
+
+
+    document.getElementById("progressBar").style.width =
+    percent+"%";
+
+    }
+
+
+    function autoSave(){
+
+    let form = document.querySelector("form");
+
+    let data = new FormData(form);
+
+
+    fetch(form.action,{
+
+    method:"POST",
+
+    body:data
+
+    });
+
+    }
+
+</script>
