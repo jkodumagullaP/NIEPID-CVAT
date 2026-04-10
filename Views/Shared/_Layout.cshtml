@@ -6,200 +6,177 @@
 <!DOCTYPE html>
 
 <html>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-<link rel="stylesheet" href="~/css/theme-overrides.css">
 <head>
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title>CVAT – Comprehensive Vocational Assessment Tool</title>
+<title>CVAT</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
-    <style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
 
-        /* COLOR SYSTEM */
-
-        :root {
-            --primary: #0b5ed7;
-            --primary-soft: #e8f0fe;
-            --secondary: #1e293b;
-            --accent: #ffc107;
-            --bg: #f4f7fb;
-            --card-radius: 18px;
-        }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-        /* GLOBAL */
+<style>
 
-        body {
-            font-family: 'Segoe UI',system-ui;
-            background: var(--bg);
-            color: #1e293b;
-            margin: 0;
-        }
+:root{
+--primary:#0b5ed7;
+--primary-soft:#edf4ff;
+--dark:#0f172a;
+--bg:#f6f8fc;
+--radius:18px;
+}
 
-
-        /* HEADER */
-
-        .brand-header {
-            background: white;
-            padding: 15px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,.06);
-            border-bottom: 1px solid #eef2f7;
-        }
+body{
+font-family:Poppins;
+background:var(--bg);
+margin:0;
+}
 
 
-        .brand-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--secondary);
-        }
+/* HEADER */
+
+.topbar{
+height:70px;
+background:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 30px;
+box-shadow:0 4px 18px rgba(0,0,0,.05);
+z-index:100;
+position:sticky;
+top:0;
+}
+
+.brand{
+font-weight:700;
+color:var(--dark);
+font-size:18px;
+}
 
 
-        .brand-sub {
-            font-size: 13px;
-            color: #6b7280;
-        }
+/* LAYOUT */
+
+.layout{
+display:flex;
+}
 
 
-        .header-logo {
-            transition: .3s;
-        }
+/* SIDEBAR */
+
+.sidebar{
+
+width:240px;
+min-height:100vh;
+background:linear-gradient(180deg,#0b5ed7,#2563eb);
+
+padding:25px 15px;
+color:white;
+position:sticky;
+top:70px;
+}
 
 
-            .header-logo:hover {
-                transform: scale(1.05);
-            }
+.sidebar .nav-link{
+
+color:white;
+padding:12px 16px;
+border-radius:12px;
+font-weight:500;
+margin-bottom:8px;
+transition:.2s;
+
+}
 
 
-        /* NAVBAR */
+.sidebar .nav-link:hover{
 
-        .navbar {
-            background: linear-gradient(90deg,#0b5ed7,#2563eb);
-            box-shadow: 0 8px 25px rgba(0,0,0,.08);
-        }
+background:rgba(255,255,255,.15);
+transform:translateX(3px);
 
-
-        .nav-link {
-            color: white !important;
-            font-weight: 600;
-            padding: 9px 16px;
-            border-radius: 10px;
-            transition: .2s;
-        }
+}
 
 
-            .nav-link:hover {
-                background: rgba(255,255,255,.18);
-            }
+.sidebar .active{
+
+background:white;
+color:var(--primary) !important;
+font-weight:600;
+
+}
 
 
-        .dropdown-menu {
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,.12);
-        }
+/* CONTENT */
+
+.content{
+
+flex:1;
+padding:30px;
+
+}
 
 
-        /* PAGE CONTAINER */
+.page-card{
 
-        .content-wrapper {
-            margin-top: 30px;
-            margin-bottom: 40px;
-            animation: fadeIn .35s ease-in-out;
-        }
+background:white;
+padding:30px;
+border-radius:var(--radius);
+box-shadow:0 15px 45px rgba(0,0,0,.05);
 
-
-        .page-card {
-            background: white;
-            padding: 30px;
-            border-radius: var(--card-radius);
-            box-shadow: 0 15px 45px rgba(0,0,0,.05);
-        }
+}
 
 
-        /* BUTTONS */
+/* USER BADGE */
 
-        .btn {
-            border-radius: 10px;
-            padding: 8px 18px;
-            font-weight: 600;
-        }
+.user-badge{
 
+background:var(--primary-soft);
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
 
-        .btn-primary {
-            background: linear-gradient(90deg,#0b5ed7,#2563eb);
-            border: none;
-        }
+}
 
 
-            .btn-primary:hover {
-                opacity: .9;
-            }
+/* FOOTER */
+
+.footer{
+
+text-align:center;
+padding:20px;
+color:#64748b;
+font-size:13px;
+
+}
 
 
-        /* TABLE */
+/* MOBILE */
 
-        .table {
-            border-radius: 12px;
-            overflow: hidden;
-        }
+@@media(max-width:900px){
 
+.sidebar{
 
-            .table thead {
-                background: #f1f5f9;
-                font-weight: 600;
-            }
+width:70px;
+padding:20px 8px;
 
+}
 
-        .table-hover tbody tr:hover {
-            background: #f8fafc;
-        }
+.sidebar span{
 
+display:none;
 
-        /* BADGES */
+}
 
-        .badge {
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
+}
 
+</style>
 
-        /* FOOTER */
-
-        .footer {
-            background: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 13px;
-            color: #64748b;
-            border-top: 1px solid #e5e7eb;
-        }
-
-
-        /* ANIMATION FIX FOR RAZOR */
-
-        @@keyframes fadeIn {
-
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-    </style>
-
-
-<link rel="stylesheet" href="~/css/navy-sidebar.css">
 </head>
 
 
@@ -207,221 +184,174 @@
 <body>
 
 
-    <!-- HEADER -->
 
-    <div class="brand-header">
+<!-- TOP BAR -->
 
-        <div class="container d-flex align-items-center justify-content-between">
+<div class="topbar">
 
-            <img src="/Images/20240912282747915.png" height="65" class="header-logo" />
+<div class="brand">
 
-            <div class="text-center">
+CVAT – Vocational Assessment
 
-                <div class="brand-title">
-                    CVAT – Comprehensive Vocational Assessment Tool
-                </div>
+</div>
 
-                <div class="brand-sub">
-                    Vocational Evaluation • Skill Assessment • Career Planning
-                </div>
+<div>
 
-            </div>
+@if(SignInManager.IsSignedIn(User))
+{
 
-            <img src="/Images/202409121913074416.png" height="65" class="header-logo" />
+<span class="user-badge">
 
-        </div>
+@User.Identity?.Name
 
-    </div>
+</span>
 
+}
 
+</div>
 
-    <!-- NAVBAR -->
+</div>
 
-    <nav class="navbar navbar-expand-lg">
 
-        <div class="container">
 
-            <button class="navbar-toggler bg-light"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNav">
+<div class="layout">
 
-                <span class="navbar-toggler-icon"></span>
 
-            </button>
 
+<!-- SIDEBAR -->
 
-            <div class="collapse navbar-collapse" id="mainNav">
+<div class="sidebar">
 
-                <ul class="navbar-nav me-auto gap-2">
+@if(SignInManager.IsSignedIn(User))
+{
 
-                    @if (SignInManager.IsSignedIn(User))
-                    {
+@if(User.IsInRole("Admin"))
+{
 
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Dashboard">Dashboard</a>
-                            </li>
+<a class="nav-link" href="/Dashboard">
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Admin/Users">Users</a>
-                            </li>
+Dashboard
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/QuestionBank/index">Question Bank</a>
-                            </li>
-                        }
+</a>
 
-                        @if (User.IsInRole("LeadAssessor"))
-                        {
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Dashboard">Dashboard</a>
-                            </li>
+<a class="nav-link" href="/Admin/Users">
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Candidates">Candidates</a>
-                            </li>
+Users
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Assessments/ReviewQueue">
-                                    Review Queue
-                                </a>
-                            </li>
+</a>
 
-                        }
 
+<a class="nav-link" href="/QuestionBank/index">
 
-                        @if (User.IsInRole("Assessor") || User.IsInRole("LeadAssessor"))
-                        {
+Question Bank
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Assessments/MyTasks">
-                                    Assessments
-                                </a>
-                            </li>
+</a>
 
-                        }
+}
 
 
-                        <li class="nav-item dropdown">
+@if(User.IsInRole("LeadAssessor"))
+{
 
-                            <a class="nav-link dropdown-toggle"
-                               data-bs-toggle="dropdown">
+<a class="nav-link" href="/Dashboard">
 
-                                Support
+Dashboard
 
-                            </a>
+</a>
 
-                            <ul class="dropdown-menu">
 
-                                <li>
-                                    <a class="dropdown-item" href="/Support/FAQ">
-                                        FAQs
-                                    </a>
-                                </li>
+<a class="nav-link" href="/Candidates">
 
-                                <li>
-                                    <a class="dropdown-item" href="/Support/Help">
-                                        Help
-                                    </a>
-                                </li>
+Candidates
 
-                                <li>
-                                    <a class="dropdown-item" href="/Support/Contact">
-                                        Contact
-                                    </a>
-                                </li>
+</a>
 
-                            </ul>
 
-                        </li>
+<a class="nav-link" href="/Assessments/ReviewQueue">
 
-                    }
+Review Queue
 
-                </ul>
+</a>
 
+}
 
-                <ul class="navbar-nav ms-auto">
 
-                    @if (SignInManager.IsSignedIn(User))
-                    {
+@if(User.IsInRole("Assessor") || User.IsInRole("LeadAssessor"))
+{
 
-                        <li class="nav-item dropdown">
+<a class="nav-link" href="/Assessments/MyTasks">
 
-                            <a class="nav-link dropdown-toggle"
-                               data-bs-toggle="dropdown">
+My Tasks
 
-                                @User.Identity?.Name
+</a>
 
-                            </a>
+}
 
 
-                            <ul class="dropdown-menu dropdown-menu-end">
+<a class="nav-link" href="/Support/FAQ">
 
-                                <li>
+FAQ
 
-                                    <form asp-controller="Account"
-                                          asp-action="Logout"
-                                          method="post">
+</a>
 
-                                        @Html.AntiForgeryToken()
 
-                                        <button type="submit"
-                                                class="dropdown-item text-danger fw-bold">
+<a class="nav-link" href="/Support/Help">
 
-                                            Logout
+Help
 
-                                        </button>
+</a>
 
-                                    </form>
 
-                                </li>
+<form asp-controller="Account"
+asp-action="Logout"
+method="post">
 
-                            </ul>
+@Html.AntiForgeryToken()
 
-                        </li>
+<button class="nav-link text-start w-100 border-0 bg-transparent">
 
-                    }
+Logout
 
-                </ul>
+</button>
 
-            </div>
+</form>
 
-        </div>
+}
 
-    </nav>
+</div>
 
 
 
-    <!-- CONTENT -->
+<!-- PAGE CONTENT -->
 
-    <div class="container content-wrapper">
+<div class="content">
 
-        <div class="page-card">
+<div class="page-card">
 
-            @RenderBody()
+@RenderBody()
 
-        </div>
+</div>
 
-    </div>
 
+<div class="footer">
 
+© @DateTime.Now.Year NIEPID
 
-    <!-- FOOTER -->
+</div>
 
-    <div class="footer">
 
-        © @DateTime.Now.Year NIEPID
-        Manovikas Nagar, Secunderabad – 500009
+</div>
 
-    </div>  
 
 
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    @RenderSection("Scripts", required: false)
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+@RenderSection("Scripts", required:false)
 
 </body>
 
